@@ -1,1536 +1,1516 @@
+
+
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Üniversite Bölüm Araştırması</title>
+    <title>Veteriner Fakültesi Rehberi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --navy: #0a1628;
+            --navy-light: #112240;
+            --navy-mid: #0d1f3c;
+            --red: #dc2626;
+            --red-soft: #ef4444;
+            --red-glow: rgba(220, 38, 38, 0.3);
+            --green: #166534;
+            --green-soft: #22c55e;
+            --green-glow: rgba(22, 101, 52, 0.3);
+            --accent-1: #1e3a5f;
+            --accent-2: #7f1d1d;
+            --glass: rgba(17, 34, 64, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-hover: rgba(255, 255, 255, 0.15);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy);
+            color: #e2e8f0;
+            overflow-x: hidden;
             min-height: 100vh;
-            padding: 20px;
-            color: #e0e0e0;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        /* ═══════════ PROGRESS BAR ═══════════ */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--red), var(--green-soft), var(--red-soft));
+            z-index: 9999;
+            transition: width 0.15s ease-out;
+            border-radius: 0 2px 2px 0;
         }
 
-        .tabs {
+        /* ═══════════ PARTICLES ═══════════ */
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-50px) rotate(720deg); opacity: 0; }
+        }
+
+        /* ═══════════ SEARCH SCREEN ═══════════ */
+        #search-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            z-index: 1000;
+            background: var(--navy);
+            transition: all 1.2s cubic-bezier(0.76, 0, 0.24, 1);
         }
 
-        .tab-btn {
-            padding: 10px 20px;
-            border: 2px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.05);
-            color: #c0c0c0;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        #search-screen::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.06), transparent 70%);
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: searchGlow 5s ease-in-out infinite;
+        }
+
+        @keyframes searchGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.6; }
+        }
+
+        #search-screen.hide {
+            opacity: 0;
+            transform: scale(1.15);
+            pointer-events: none;
+        }
+
+        .search-icon-top {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: pawBounce 2s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes pawBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-8px) rotate(-5deg); }
+            75% { transform: translateY(-4px) rotate(5deg); }
+        }
+
+        .search-title {
+            font-size: clamp(15px, 3.5vw, 22px);
+            font-weight: 300;
+            color: #64748b;
+            margin-bottom: 32px;
+            letter-spacing: 0.5px;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(17, 34, 64, 0.8);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 60px;
+            padding: 14px 18px;
+            width: min(620px, 92vw);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .search-box::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, var(--red), var(--green-soft), var(--red-soft), var(--green));
+            border-radius: 60px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            background-size: 300% 300%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        .search-box:hover::before,
+        .search-box:focus-within::before {
+            opacity: 1;
+        }
+
+        .search-box:hover,
+        .search-box:focus-within {
+            border-color: transparent;
+            transform: scale(1.02);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .search-text {
+            flex: 1;
+            font-size: clamp(12px, 2.6vw, 17px);
+            color: #94a3b8;
+            font-weight: 400;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .search-text span {
+            border-right: 2px solid var(--red-soft);
+            padding-right: 2px;
+            animation: blink 1s step-end infinite;
             white-space: nowrap;
         }
 
-        .tab-btn:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.3);
-            color: #fff;
+        @keyframes blink {
+            50% { border-color: transparent; }
         }
 
-        .tab-btn.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-color: transparent;
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        @media (max-width: 420px) {
+            .search-text span {
+                white-space: normal;
+                word-break: break-word;
+                line-height: 1.5;
+                display: inline;
+            }
+            .search-box {
+                padding: 14px 14px;
+            }
         }
 
-        .view-toggle {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 24px;
-            gap: 4px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 30px;
-            padding: 4px;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .view-btn {
-            padding: 8px 24px;
+        .search-btn {
+            width: 48px;
+            height: 48px;
             border: none;
-            background: transparent;
-            color: #a0a0a0;
-            border-radius: 26px;
+            background: linear-gradient(135deg, var(--red), #991b1b);
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 12px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
         }
 
-        .view-btn.active {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
+        .search-btn:hover {
+            transform: scale(1.18) rotate(8deg);
+            box-shadow: 0 0 40px var(--red-glow);
+        }
+
+        .search-btn:active {
+            transform: scale(0.92);
+        }
+
+        .search-btn i {
+            font-size: 18px;
             color: #fff;
-            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
         }
 
-        .section {
+        .hint-text {
+            margin-top: 24px;
+            color: #475569;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 2.5s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* ═══════════ MAIN CONTENT ═══════════ */
+        #main-content {
             display: none;
-            animation: fadeIn 0.4s ease;
+            opacity: 0;
         }
 
-        .section.active {
+        #main-content.show {
             display: block;
+            animation: contentIn 1.2s ease 0.3s forwards;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes contentIn {
+            to { opacity: 1; }
         }
 
-        .section-title {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 20px;
+        /* ═══════════ HERO ═══════════ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            position: relative;
+            overflow: hidden;
+            padding: 40px 20px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.08), transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: heroGlow 5s ease-in-out infinite;
+        }
+
+        @keyframes heroGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 0.8; }
+        }
+
+        .hero-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 28px;
+            background: rgba(220, 38, 38, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+            font-size: 38px;
+            color: var(--red-soft);
+            opacity: 0;
+            transform: translateY(30px) scale(0.8);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(22, 101, 52, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 50px;
+            font-size: 13px;
+            color: var(--green-soft);
+            margin-bottom: 28px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 7vw, 72px);
+            font-weight: 900;
+            line-height: 1.08;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            letter-spacing: -2px;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--red-soft), #fca5a5, var(--red));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 16px;
-            margin-bottom: 40px;
+        .hero h1 .gradient-text-2 {
+            background: linear-gradient(135deg, var(--green-soft), #86efac, #166534);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .card {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+        .hero > p {
+            font-size: clamp(15px, 2.2vw, 19px);
+            color: #64748b;
+            max-width: 520px;
+            line-height: 1.8;
+            opacity: 0;
+            transform: translateY(40px);
+            font-weight: 300;
+            padding: 0 20px;
+        }
+
+        .hero-arrow {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            color: #334155;
+            font-size: 20px;
+            animation: arrowFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(12px); }
+        }
+
+        /* ═══════════ SECTIONS ═══════════ */
+        .content-section {
+            padding: 100px 20px;
+            position: relative;
+        }
+
+        .section-inner {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .section-bg-accent {
+            background: linear-gradient(180deg, transparent, rgba(220, 38, 38, 0.02) 50%, transparent);
+        }
+
+        .section-bg-green {
+            background: linear-gradient(180deg, transparent, rgba(22, 101, 52, 0.03) 50%, transparent);
+        }
+
+        /* ═══════════ SECTION HEADER ═══════════ */
+        .section-header {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--red-soft);
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .section-number.green {
+            color: var(--green-soft);
+        }
+
+        .section-header h2 {
+            font-size: clamp(26px, 5vw, 44px);
+            font-weight: 800;
+            opacity: 0;
+            transform: translateY(30px);
+            letter-spacing: -0.5px;
+        }
+
+        .section-header .subtitle {
+            margin-top: 14px;
+            color: #64748b;
+            font-size: 17px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            font-weight: 300;
+        }
+
+        .divider {
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--red), var(--green-soft));
+            margin: 0 auto 48px;
+            border-radius: 10px;
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        /* ═══════════ UNIVERSITY CARDS ═══════════ */
+        .uni-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .uni-card {
+            background: rgba(17, 34, 64, 0.5);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 28px 24px;
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
         }
 
-        .card::before {
+        .uni-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
-            border-radius: 16px 16px 0 0;
+            border-radius: 24px 24px 0 0;
         }
 
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(255,255,255,0.2);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        .uni-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #fbbf24, var(--red-soft), #fbbf24);
+        }
+        .uni-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #c0c0c0, var(--red-soft), #c0c0c0);
+        }
+        .uni-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #cd7f32, var(--green-soft), #cd7f32);
+        }
+        .uni-card:nth-child(4)::before {
+            background: linear-gradient(90deg, var(--red-soft), var(--green-soft));
+        }
+        .uni-card:nth-child(5)::before {
+            background: linear-gradient(90deg, var(--green-soft), var(--red-soft));
         }
 
-        .card-uni {
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 12px;
-            line-height: 1.3;
+        .uni-card:hover {
+            transform: translateY(-6px) !important;
+            border-color: var(--glass-border-hover);
+            background: rgba(17, 34, 64, 0.7);
         }
 
-        .card-bolum {
-            font-size: 13px;
-            font-weight: 600;
-            color: #a78bfa;
-            margin-bottom: 12px;
-            display: none;
-        }
-
-        .uni-view .card-bolum {
-            display: block;
-        }
-
-        .card-details {
+        .uni-card-header {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .detail-row {
-            display: flex;
+            align-items: flex-start;
             justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .uni-rank-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
             align-items: center;
-            padding: 6px 10px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 8px;
-            font-size: 13px;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 900;
+            flex-shrink: 0;
         }
 
-        .detail-label {
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .detail-value {
-            font-weight: 700;
-            color: #e0e0e0;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .badge-burslu {
-            background: rgba(52, 211, 153, 0.15);
-            color: #34d399;
-            border: 1px solid rgba(52, 211, 153, 0.3);
-        }
-
-        .badge-hazirlik {
-            background: rgba(96, 165, 250, 0.15);
-            color: #60a5fa;
-            border: 1px solid rgba(96, 165, 250, 0.3);
-        }
-
-        .badge-hazirlik-yok {
-            background: rgba(156, 163, 175, 0.15);
-            color: #9ca3af;
-            border: 1px solid rgba(156, 163, 175, 0.3);
-        }
-
-        .badge-yok {
+        .uni-card:nth-child(1) .uni-rank-badge {
             background: rgba(251, 191, 36, 0.15);
             color: #fbbf24;
             border: 1px solid rgba(251, 191, 36, 0.3);
         }
+        .uni-card:nth-child(2) .uni-rank-badge {
+            background: rgba(192, 192, 192, 0.15);
+            color: #c0c0c0;
+            border: 1px solid rgba(192, 192, 192, 0.3);
+        }
+        .uni-card:nth-child(3) .uni-rank-badge {
+            background: rgba(205, 127, 50, 0.15);
+            color: #cd7f32;
+            border: 1px solid rgba(205, 127, 50, 0.3);
+        }
+        .uni-card:nth-child(4) .uni-rank-badge,
+        .uni-card:nth-child(5) .uni-rank-badge {
+            background: rgba(100, 116, 139, 0.15);
+            color: #94a3b8;
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
 
-        .badges-row {
+        .uni-card-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: #f1f5f9;
+            line-height: 1.3;
+            flex: 1;
+        }
+
+        .uni-card-lang {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .lang-tr {
+            background: rgba(220, 38, 38, 0.12);
+            color: #fca5a5;
+            border: 1px solid rgba(220, 38, 38, 0.25);
+        }
+
+        .lang-en {
+            background: rgba(34, 197, 94, 0.12);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+        }
+
+        .uni-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .uni-stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 14px 12px;
+            text-align: center;
+        }
+
+        .uni-stat-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 6px;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .uni-stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: #f1f5f9;
+            letter-spacing: -0.5px;
+        }
+
+        .uni-stat-value.red { color: var(--red-soft); }
+        .uni-stat-value.green { color: var(--green-soft); }
+
+        .uni-diff-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 6px;
-            flex-wrap: wrap;
+            padding: 10px;
+            background: rgba(34, 197, 94, 0.06);
+            border: 1px solid rgba(34, 197, 94, 0.12);
+            border-radius: 12px;
+            margin-bottom: 14px;
+        }
+
+        .uni-diff-row i {
+            color: var(--green-soft);
+            font-size: 12px;
+        }
+
+        .uni-diff-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green-soft);
+        }
+
+        .uni-nets-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .net-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 14px 12px;
+            text-align: center;
+        }
+
+        .net-box-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .net-box-value {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .net-tyt { color: #fb923c; }
+        .net-ayt { color: #a78bfa; }
+
+        /* ═══════════ COMPARISON TABLE (Mobile friendly) ═══════════ */
+        .comparison-section {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 20px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            min-width: 700px;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: rgba(17, 34, 64, 0.5);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .comparison-table thead th {
+            background: rgba(220, 38, 38, 0.08);
+            padding: 16px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .comparison-table thead th:first-child {
+            text-align: left;
+            padding-left: 24px;
+        }
+
+        .comparison-table tbody td {
+            padding: 18px 14px;
+            font-size: 14px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+            transition: background 0.3s;
+        }
+
+        .comparison-table tbody td:first-child {
+            text-align: left;
+            padding-left: 24px;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .comparison-table tbody tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .comparison-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-badge-up {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(34, 197, 94, 0.12);
+            color: var(--green-soft);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+        }
+
+        .scroll-hint {
+            display: none;
+            text-align: center;
+            padding: 12px;
+            color: #475569;
+            font-size: 12px;
+            gap: 6px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 750px) {
+            .scroll-hint {
+                display: flex;
+            }
+        }
+
+        /* ═══════════ INFO CARDS ═══════════ */
+        .info-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card {
+            background: rgba(17, 34, 64, 0.5);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px 24px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .info-card:hover {
+            transform: translateY(-4px) !important;
+            border-color: var(--glass-border-hover);
+        }
+
+        .info-card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 18px;
+        }
+
+        .info-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #f1f5f9;
+        }
+
+        .info-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        /* ═══════════ STATS GRID ═══════════ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 36px 20px;
+            background: rgba(17, 34, 64, 0.5);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            opacity: 0;
+            transform: scale(0.85);
+        }
+
+        .stat-icon {
+            font-size: 24px;
             margin-bottom: 12px;
         }
 
-        .siralama-box {
+        .stat-number {
+            font-size: 44px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--red-soft), #fca5a5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-number.green-grad {
+            background: linear-gradient(135deg, var(--green-soft), #86efac);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* ═══════════ QUOTE ═══════════ */
+        .quote-section {
+            min-height: 50vh;
             display: flex;
-            gap: 8px;
-            margin-top: 4px;
+            align-items: center;
+            justify-content: center;
         }
 
-        .siralama-item {
-            flex: 1;
+        .quote-wrap {
             text-align: center;
-            padding: 8px;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.04);
+            max-width: 600px;
+            padding: 0 20px;
         }
 
-        .siralama-item .year {
-            font-size: 11px;
-            color: #9ca3af;
-            margin-bottom: 4px;
+        .quote-icon {
+            font-size: 40px;
+            color: rgba(220, 38, 38, 0.2);
+            margin-bottom: 24px;
+            opacity: 0;
         }
 
-        .siralama-item .rank {
-            font-size: 18px;
-            font-weight: 800;
-            color: #fff;
+        .quote-wrap blockquote {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(22px, 4vw, 32px);
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.6;
+            color: #cbd5e1;
+            opacity: 0;
+            transform: translateY(30px);
         }
 
-        .rank-diff {
-            font-size: 11px;
-            margin-top: 4px;
-            font-weight: 600;
+        .quote-author {
+            margin-top: 24px;
+            color: var(--red-soft);
+            font-size: 15px;
+            opacity: 0;
+            transform: translateY(10px);
+            font-weight: 500;
         }
 
-        .rank-up {
-            color: #34d399;
+        /* ═══════════ FOOTER ═══════════ */
+        .footer {
+            text-align: center;
+            padding: 50px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
         }
 
-        .rank-down {
-            color: #f87171;
+        .footer p {
+            color: #334155;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
-        .uni-section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 16px;
-            padding: 12px 20px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
+        .footer .heart {
+            color: var(--red-soft);
+            animation: heartBeat 1.5s ease infinite;
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding: 12px;
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ═══════════ REVEALED ═══════════ */
+        .revealed {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .revealed-scale {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .revealed-divider {
+            opacity: 1 !important;
+            transform: scaleX(1) !important;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ═══════════ RESPONSIVE ═══════════ */
+        @media (max-width: 640px) {
+            .content-section {
+                padding: 70px 16px;
             }
-
-            .tab-btn {
-                padding: 8px 14px;
-                font-size: 12px;
-            }
-
-            .cards-grid {
+            .uni-cards-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
             }
-
-            .section-title {
-                font-size: 18px;
+            .info-cards-grid {
+                grid-template-columns: 1fr;
             }
-
-            .card {
-                padding: 16px;
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
-
-            .card-uni {
-                font-size: 14px;
+            .uni-card {
+                padding: 22px 18px;
             }
         }
 
-        @media (max-width: 480px) {
-            .tabs {
-                gap: 6px;
-            }
-
-            .tab-btn {
-                padding: 7px 12px;
-                font-size: 11px;
-            }
-
-            .view-btn {
-                padding: 6px 16px;
-                font-size: 12px;
-            }
-
-            .siralama-item .rank {
-                font-size: 15px;
+        @media (max-width: 380px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="view-toggle">
-            <button class="view-btn active" onclick="switchView('bolum')">Bölüme Göre</button>
-            <button class="view-btn" onclick="switchView('uni')">Üniversiteye Göre</button>
+
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- ═══════════ SEARCH SCREEN ═══════════ -->
+    <div id="search-screen">
+        <div class="search-icon-top">🐾</div>
+        <p class="search-title">Merak ettiğin her şey bir tık uzağında</p>
+        <div class="search-box" id="searchBox">
+            <div class="search-text">
+                <span id="typewriter"></span>
+            </div>
+            <button class="search-btn" id="searchBtn" onclick="startExperience()" aria-label="Ara">
+                <i class="fas fa-search"></i>
+            </button>
         </div>
+        <p class="hint-text"><i class="fas fa-arrow-up"></i> Büyütece bas, keşfet</p>
+    </div>
 
-        <div id="bolum-view">
-            <div class="tabs" id="bolum-tabs">
-                <button class="tab-btn active" onclick="showSection('ekonometri', this)">Ekonometri</button>
-                <button class="tab-btn" onclick="showSection('iktisat', this)">İktisat</button>
-                <button class="tab-btn" onclick="showSection('isletme', this)">İşletme</button>
-                <button class="tab-btn" onclick="showSection('uluslararasi', this)">Uluslararası İlişkiler</button>
-                <button class="tab-btn" onclick="showSection('lojistik', this)">Lojistik Yönetimi</button>
-                <button class="tab-btn" onclick="showSection('maliye', this)">Maliye</button>
-                <button class="tab-btn" onclick="showSection('sbky', this)">Siyaset Bilimi ve Kamu Yönetimi</button>
-                <button class="tab-btn" onclick="showSection('sbui', this)">Siyaset Bilimi ve Uluslararası İlişkiler</button>
-                <button class="tab-btn" onclick="showSection('ybs', this)">Yönetim Bilişim Sistemleri</button>
+    <!-- ═══════════ MAIN CONTENT ═══════════ -->
+    <div id="main-content">
+
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-icon" data-reveal>
+                <i class="fas fa-paw"></i>
             </div>
+            <div class="hero-badge" data-reveal data-delay="150">
+                <i class="fas fa-stethoscope"></i>
+                Veteriner Fakültesi
+            </div>
+            <h1 data-reveal data-delay="300">
+                <span class="gradient-text">Veteriner</span><br>
+                <span class="gradient-text-2">Fakültesi</span>
+            </h1>
+            <p data-reveal data-delay="500">
+                Hangi üniversite, kaç sıralama, kaç net gerekiyor?
+                Sana en güncel verileri derledik.
+            </p>
+            <div class="hero-arrow" data-reveal data-delay="900">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </section>
 
-            <!-- Ekonometri -->
-            <div class="section active" id="ekonometri">
-                <div class="section-title">Ekonometri</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-uni">İstanbul Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">134K</div>
+        <!-- ═══════════ ÜNİVERSİTE KARTLARI ═══════════ -->
+        <section class="content-section section-bg-accent">
+            <div class="section-inner">
+                <div class="section-header">
+                    <p class="section-number" data-reveal><i class="fas fa-bookmark"></i> Bölüm 01</p>
+                    <h2 data-reveal data-delay="100">Üniversite Sıralamaları</h2>
+                    <p class="subtitle" data-reveal data-delay="200">2025 güncel verileri ve geçen yıl karşılaştırması</p>
+                </div>
+                <div class="divider" data-reveal data-delay="280"></div>
+
+                <div class="uni-cards-grid">
+
+                    <!-- 1. İÜC İngilizce -->
+                    <div class="uni-card" data-reveal data-delay="300">
+                        <div class="uni-card-header">
+                            <div>
+                                <div class="uni-card-name">İstanbul Üniversitesi - Cerrahpaşa</div>
+                                <span class="uni-card-lang lang-en"><i class="fas fa-globe"></i> İngilizce</span>
                             </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">216K</div>
+                            <div class="uni-rank-badge">1</div>
+                        </div>
+                        <div class="uni-stats-grid">
+                            <div class="uni-stat-box">
+                                <div class="uni-stat-label"><i class="fas fa-calendar-check"></i> 2025</div>
+                                <div class="uni-stat-value red">65.896</div>
+                            </div>
+                            <div class="uni-stat-box">
+                                <div class="uni-stat-label"><i class="fas fa-calendar-minus"></i> 2024</div>
+                                <div class="uni-stat-value">70.200</div>
                             </div>
                         </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 82K</div>
+                        <div class="uni-diff-row">
+                            <i class="fas fa-arrow-trend-up"></i>
+                            <span class="uni-diff-text">4.304 sıra yükseldi</span>
+                        </div>
+                        <div class="uni-nets-row">
+                            <div class="net-box">
+                                <div class="net-box-label">TYT NET</div>
+                                <div class="net-box-value net-tyt">~83</div>
+                            </div>
+                            <div class="net-box">
+                                <div class="net-box-label">AYT NET</div>
+                                <div class="net-box-value net-ayt">~52</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card">
-                        <div class="card-uni">Marmara Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">144K</div>
+
+                    <!-- 2. İÜC Türkçe -->
+                    <div class="uni-card" data-reveal data-delay="400">
+                        <div class="uni-card-header">
+                            <div>
+                                <div class="uni-card-name">İstanbul Üniversitesi - Cerrahpaşa</div>
+                                <span class="uni-card-lang lang-tr"><i class="fas fa-flag"></i> Türkçe</span>
                             </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">225K</div>
+                            <div class="uni-rank-badge">2</div>
+                        </div>
+                        <div class="uni-stats-grid">
+                            <div class="uni-stat-box">
+                                <div class="uni-stat-label"><i class="fas fa-calendar-check"></i> 2025</div>
+                                <div class="uni-stat-value red">70.808</div>
+                            </div>
+                            <div class="uni-stat-box">
+                                <div class="uni-stat-label"><i class="fas fa-calendar-minus"></i> 2024</div>
+                                <div class="uni-stat-value">75.400</div>
                             </div>
                         </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 81K</div>
+                        <div class="uni-diff-row">
+                            <i class="fas fa-arrow-trend-up"></i>
+                            <span class="uni-diff-text">4.592 sıra yükseldi</span>
+                        </div>
+                        <div class="uni-nets-row">
+                            <div class="net-box">
+                                <div class="net-box-label">TYT NET</div>
+                                <div class="net-box-value net-tyt">~79</div>
+                            </div>
+                            <div class="net-box">
+                                <div class="net-box-label">AYT NET</div>
+                                <div class="net-box-value net-ayt">~48</div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- 3. Bursa Uludağ -->
+                    <div class="uni-card" data-reveal data-delay="500">
+                        <div class="uni-card-header">
+                            <div>
+                                <div class="uni-card-name">Bursa Uludağ Üniversitesi</div>
+                            </div>
+                            <div class="uni-rank-badge">3</div>
+                        </div>
+                        <div class="uni-stats-grid">
+                            <div class="uni-stat-box">
+                                <div class="uni-stat-label"><i class="fas fa-calendar-check"></i> 2025</div>
+                                <div class="uni-stat-value red">72.664</div>
+                            </div>
+                            <div class="uni-stat-box">
+                                <div class="uni-stat-label"><i class="fas fa-calendar-minus"></i> 2024</div>
+                                <div class="uni-stat-value">78.100</div>
+                            </div>
+                        </div>
+                        <div class="uni-diff-row">
+                            <i class="fas fa-arrow-trend-up"></i>
+                            <span class="uni-diff-text">5.436 sıra yükseldi</span>
+                        </div>
+                        <div class="uni-nets-row">
+                            <div class="net-box">
+                                <div class="net-box-label">TYT NET</div>
+                                <div class="net-box-value net-tyt">~78</div>
+                            </div>
+                            <div class="net-box">
+                                <div class="net-box-label">AYT NET</div>
+                                <div class="net-box-value net-ayt">~47</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Balıkesir -->
+                    <div class="uni-card" data-reveal data-delay="600">
+                        <div class="uni-card-header">
+                            <div>
+                                <div class="uni-card-name">Balıkesir Üniversitesi</div>
+                            </div>
+                            <div class="uni-rank-badge">4</div>
+                        </div>
+                        <div class="uni-stats-grid">
+                            <div class="uni-stat-box">
+                                <div class="uni-stat-label"><i class="fas fa-calendar-check"></i> 2025</div>
+                                <div class="uni-stat-value red">88.200</div>
+                            </div>
+                            <div class="uni-stat-box">
+                                <div class="uni-stat-label"><i class="fas fa-calendar-minus"></i> 2024</div>
+                                <div class="uni-stat-value">94.500</div>
+                            </div>
+                        </div>
+                        <div class="uni-diff-row">
+                            <i class="fas fa-arrow-trend-up"></i>
+                            <span class="uni-diff-text">6.300 sıra yükseldi</span>
+                        </div>
+                        <div class="uni-nets-row">
+                            <div class="net-box">
+                                <div class="net-box-label">TYT NET</div>
+                                <div class="net-box-value net-tyt">~74</div>
+                            </div>
+                            <div class="net-box">
+                                <div class="net-box-label">AYT NET</div>
+                                <div class="net-box-value net-ayt">~43</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Tekirdağ Namık Kemal -->
+                    <div class="uni-card" data-reveal data-delay="700">
+                        <div class="uni-card-header">
+                            <div>
+                                <div class="uni-card-name">Tekirdağ Namık Kemal Üniversitesi</div>
+                            </div>
+                            <div class="uni-rank-badge">5</div>
+                        </div>
+                        <div class="uni-stats-grid">
+                            <div class="uni-stat-box">
+                                <div class="uni-stat-label"><i class="fas fa-calendar-check"></i> 2025</div>
+                                <div class="uni-stat-value red">98.500</div>
+                            </div>
+                            <div class="uni-stat-box">
+                                <div class="uni-stat-label"><i class="fas fa-calendar-minus"></i> 2024</div>
+                                <div class="uni-stat-value">106.000</div>
+                            </div>
+                        </div>
+                        <div class="uni-diff-row">
+                            <i class="fas fa-arrow-trend-up"></i>
+                            <span class="uni-diff-text">7.500 sıra yükseldi</span>
+                        </div>
+                        <div class="uni-nets-row">
+                            <div class="net-box">
+                                <div class="net-box-label">TYT NET</div>
+                                <div class="net-box-value net-tyt">~72</div>
+                            </div>
+                            <div class="net-box">
+                                <div class="net-box-label">AYT NET</div>
+                                <div class="net-box-value net-ayt">~41</div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+        </section>
 
-            <!-- İktisat -->
-            <div class="section" id="iktisat">
-                <div class="section-title">İktisat</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-uni">İstanbul Medeniyet Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">119K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">169K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 50K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Beykent Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">125K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">173K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 48K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Sabahattin Zaim Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">134K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank" style="font-size:13px;color:#fbbf24;">Yok</div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- ═══════════ KARŞILAŞTIRMA TABLOSU ═══════════ -->
+        <section class="content-section">
+            <div class="section-inner">
+                <div class="section-header">
+                    <p class="section-number green" data-reveal><i class="fas fa-bookmark"></i> Bölüm 02</p>
+                    <h2 data-reveal data-delay="100">Karşılaştırma Tablosu</h2>
+                    <p class="subtitle" data-reveal data-delay="200">Tüm verileri bir arada gör</p>
+                </div>
+                <div class="divider" data-reveal data-delay="280"></div>
+
+                <div class="scroll-hint">
+                    <i class="fas fa-arrows-left-right"></i> Tabloyu yana kaydırabilirsin
+                </div>
+
+                <div class="comparison-section">
+                    <table class="comparison-table" data-reveal data-delay="350">
+                        <thead>
+                            <tr>
+                                <th>Üniversite / Program</th>
+                                <th>2025 Sıralama</th>
+                                <th>2024 Sıralama</th>
+                                <th>Fark</th>
+                                <th>TYT Net</th>
+                                <th>AYT Net</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>İÜ-Cerrahpaşa (İngilizce)</td>
+                                <td>65.896</td>
+                                <td>70.200</td>
+                                <td><span class="table-badge-up"><i class="fas fa-arrow-up"></i> 4.304</span></td>
+                                <td>~83</td>
+                                <td>~52</td>
+                            </tr>
+                            <tr>
+                                <td>İÜ-Cerrahpaşa (Türkçe)</td>
+                                <td>70.808</td>
+                                <td>75.400</td>
+                                <td><span class="table-badge-up"><i class="fas fa-arrow-up"></i> 4.592</span></td>
+                                <td>~79</td>
+                                <td>~48</td>
+                            </tr>
+                            <tr>
+                                <td>Bursa Uludağ Üni.</td>
+                                <td>72.664</td>
+                                <td>78.100</td>
+                                <td><span class="table-badge-up"><i class="fas fa-arrow-up"></i> 5.436</span></td>
+                                <td>~78</td>
+                                <td>~47</td>
+                            </tr>
+                            <tr>
+                                <td>Balıkesir Üni.</td>
+                                <td>88.200</td>
+                                <td>94.500</td>
+                                <td><span class="table-badge-up"><i class="fas fa-arrow-up"></i> 6.300</span></td>
+                                <td>~74</td>
+                                <td>~43</td>
+                            </tr>
+                            <tr>
+                                <td>Tekirdağ Namık Kemal</td>
+                                <td>98.500</td>
+                                <td>106.000</td>
+                                <td><span class="table-badge-up"><i class="fas fa-arrow-up"></i> 7.500</span></td>
+                                <td>~72</td>
+                                <td>~41</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </section>
 
-            <!-- İşletme -->
-            <div class="section" id="isletme">
-                <div class="section-title">İşletme</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-uni">İstanbul Medeniyet Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">108K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">161K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 53K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Kültür Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">111K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">138K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 27K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Aydın Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">113K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">144K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 31K</div>
-                    </div>
+        <!-- ═══════════ GENEL BİLGİLER ═══════════ -->
+        <section class="content-section section-bg-green">
+            <div class="section-inner">
+                <div class="section-header">
+                    <p class="section-number" data-reveal><i class="fas fa-bookmark"></i> Bölüm 03</p>
+                    <h2 data-reveal data-delay="100">Dikkat Edilmesi Gerekenler</h2>
+                    <p class="subtitle" data-reveal data-delay="200">Tercih yaparken bilmen gereken önemli noktalar</p>
                 </div>
-            </div>
+                <div class="divider" data-reveal data-delay="280"></div>
 
-            <!-- Uluslararası İlişkiler -->
-            <div class="section" id="uluslararasi">
-                <div class="section-title">Uluslararası İlişkiler</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-uni">İstanbul Medeniyet Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
+                <div class="info-cards-grid">
+                    <div class="info-card" data-reveal data-delay="350">
+                        <div class="info-card-icon" style="background: rgba(220,38,38,0.1); color: var(--red-soft);">
+                            <i class="fas fa-arrow-trend-up"></i>
                         </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">100K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">146K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 46K</div>
+                        <h3>Sıralamalar Her Yıl Yükseliyor</h3>
+                        <p>Tüm üniversitelerde sıralama geçen yıla göre yukarı çıkmış durumda. Veteriner Fakültesi her geçen yıl daha çok tercih ediliyor.</p>
                     </div>
-                    <div class="card">
-                        <div class="card-uni">İstinye Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
+                    <div class="info-card" data-reveal data-delay="450">
+                        <div class="info-card-icon" style="background: rgba(34,197,94,0.1); color: var(--green-soft);">
+                            <i class="fas fa-globe"></i>
                         </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">129K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">156K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 27K</div>
+                        <h3>İngilizce Program Avantajı</h3>
+                        <p>İÜ-Cerrahpaşa'nın İngilizce programı en düşük sıralamaya sahip. İngilizce eğitim almak uluslararası kariyer kapılarını açar.</p>
                     </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Beykent Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
+                    <div class="info-card" data-reveal data-delay="550">
+                        <div class="info-card-icon" style="background: rgba(251,191,36,0.1); color: #fbbf24;">
+                            <i class="fas fa-bullseye"></i>
                         </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">144K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">176K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 32K</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Lojistik Yönetimi -->
-            <div class="section" id="lojistik">
-                <div class="section-title">Lojistik Yönetimi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-uni">İstanbul Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">110K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">154K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 44K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Medipol Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">130K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">162K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 32K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Ticaret Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">136K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">167K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 31K</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Maliye -->
-            <div class="section" id="maliye">
-                <div class="section-title">Maliye</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-uni">İstanbul Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%30 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">104K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">173K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 69K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">Marmara Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">120K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">185K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 65K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Medeniyet Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">142K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">201K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 59K</div>
+                        <h3>Net Hedeflerin Önemi</h3>
+                        <p>TYT'de 72-83, AYT'de 41-52 arası net yapman gerekiyor. Her doğru cevap sıralamanı binlerce kişi yukarı taşıyabilir.</p>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Siyaset Bilimi ve Kamu Yönetimi -->
-            <div class="section" id="sbky">
-                <div class="section-title">Siyaset Bilimi ve Kamu Yönetimi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-uni">İstanbul Medeniyet Üniversitesi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">126K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">178K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 52K</div>
+        <!-- ═══════════ RAKAMLAR ═══════════ -->
+        <section class="content-section">
+            <div class="section-inner">
+                <div class="section-header">
+                    <p class="section-number green" data-reveal><i class="fas fa-bookmark"></i> Bölüm 04</p>
+                    <h2 data-reveal data-delay="100">Rakamlarla Özet</h2>
+                </div>
+                <div class="divider" data-reveal data-delay="200"></div>
+                <div class="stats-grid">
+                    <div class="stat-card" data-reveal data-delay="300">
+                        <div class="stat-icon" style="color: var(--red-soft);"><i class="fas fa-university"></i></div>
+                        <div class="stat-number" data-count="5">0</div>
+                        <div class="stat-label">Üniversite Seçeneği</div>
                     </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Medipol Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">130K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">157K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 27K</div>
+                    <div class="stat-card" data-reveal data-delay="400">
+                        <div class="stat-icon" style="color: var(--green-soft);"><i class="fas fa-ranking-star"></i></div>
+                        <div class="stat-number green-grad" data-count="65896" data-format="dot">0</div>
+                        <div class="stat-label">En İyi Sıralama</div>
                     </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Beykent Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">178K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">205K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 27K</div>
+                    <div class="stat-card" data-reveal data-delay="500">
+                        <div class="stat-icon" style="color: #fb923c;"><i class="fas fa-pen-to-square"></i></div>
+                        <div class="stat-number" data-count="83" style="background: linear-gradient(135deg, #fb923c, #fdba74); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0</div>
+                        <div class="stat-label">Maks. TYT Net Hedefi</div>
+                    </div>
+                    <div class="stat-card" data-reveal data-delay="600">
+                        <div class="stat-icon" style="color: #a78bfa;"><i class="fas fa-calculator"></i></div>
+                        <div class="stat-number" data-count="52" style="background: linear-gradient(135deg, #a78bfa, #c4b5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0</div>
+                        <div class="stat-label">Maks. AYT Net Hedefi</div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Siyaset Bilimi ve Uluslararası İlişkiler -->
-            <div class="section" id="sbui">
-                <div class="section-title">Siyaset Bilimi ve Uluslararası İlişkiler</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-uni">İstanbul Aydın Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">106K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">137K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 31K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul 29 Mayıs Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">129K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">147K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 18K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">Üsküdar Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">129K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">154K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 25K</div>
-                    </div>
+        <!-- QUOTE -->
+        <section class="content-section quote-section">
+            <div class="quote-wrap">
+                <div class="quote-icon" data-reveal>
+                    <i class="fas fa-quote-left"></i>
                 </div>
+                <blockquote data-reveal data-delay="200">
+                    Hayvanların sessiz çığlığını duyanlar, en güçlü sesi çıkaranlardır.
+                </blockquote>
+                <p class="quote-author" data-reveal data-delay="400">
+                    🐾&nbsp; Tercih dönemin hayırlı olsun!
+                </p>
             </div>
+        </section>
 
-            <!-- Yönetim Bilişim Sistemleri -->
-            <div class="section" id="ybs">
-                <div class="section-title">Yönetim Bilişim Sistemleri</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-uni">İstanbul Gelişim Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">100K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank" style="font-size:13px;color:#fbbf24;">Yok</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Gelişim Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">107K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">107K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff" style="text-align:center;margin-top:6px;color:#9ca3af;">— 0K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Gedik Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">110K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">128K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 18K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-uni">İstanbul Topkapı Üniversitesi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">118K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">127K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 9K</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p>Senin için <i class="fas fa-heart heart"></i> ile hazırlandı</p>
+        </footer>
 
-        <!-- Üniversiteye Göre Görünüm -->
-        <div id="uni-view" style="display:none;" class="uni-view">
-            <div class="tabs" id="uni-tabs">
-                <button class="tab-btn active" onclick="showUniSection('uni-istanbul', this)">İstanbul Üniversitesi</button>
-                <button class="tab-btn" onclick="showUniSection('uni-marmara', this)">Marmara Üniversitesi</button>
-                <button class="tab-btn" onclick="showUniSection('uni-medeniyet', this)">İstanbul Medeniyet Üniversitesi</button>
-                <button class="tab-btn" onclick="showUniSection('uni-medipol', this)">İstanbul Medipol Üniversitesi</button>
-                <button class="tab-btn" onclick="showUniSection('uni-beykent', this)">İstanbul Beykent Üniversitesi</button>
-                <button class="tab-btn" onclick="showUniSection('uni-aydin', this)">İstanbul Aydın Üniversitesi</button>
-                <button class="tab-btn" onclick="showUniSection('uni-kultur', this)">İstanbul Kültür Üniversitesi</button>
-                <button class="tab-btn" onclick="showUniSection('uni-gelisim', this)">İstanbul Gelişim Üniversitesi</button>
-                <button class="tab-btn" onclick="showUniSection('uni-diger', this)">Diğer Üniversiteler</button>
-            </div>
-
-            <!-- İstanbul Üniversitesi -->
-            <div class="section active" id="uni-istanbul">
-                <div class="section-title">İstanbul Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">Ekonometri</div>
-                        <div class="card-uni">Ekonometri</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">134K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">216K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 82K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Lojistik Yönetimi</div>
-                        <div class="card-uni">Lojistik Yönetimi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">110K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">154K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 44K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Maliye</div>
-                        <div class="card-uni">Maliye</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%30 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">104K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">173K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 69K</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Marmara Üniversitesi -->
-            <div class="section" id="uni-marmara">
-                <div class="section-title">Marmara Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">Ekonometri</div>
-                        <div class="card-uni">Ekonometri</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">144K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">225K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 81K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Maliye</div>
-                        <div class="card-uni">Maliye</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">120K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">185K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 65K</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- İstanbul Medeniyet Üniversitesi -->
-            <div class="section" id="uni-medeniyet">
-                <div class="section-title">İstanbul Medeniyet Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">İktisat</div>
-                        <div class="card-uni">İktisat</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">119K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">169K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 50K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">İşletme</div>
-                        <div class="card-uni">İşletme</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">108K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">161K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 53K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Uluslararası İlişkiler</div>
-                        <div class="card-uni">Uluslararası İlişkiler</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">100K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">146K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 46K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Maliye</div>
-                        <div class="card-uni">Maliye</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">142K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">201K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 59K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Siyaset Bilimi ve Kamu Yönetimi</div>
-                        <div class="card-uni">Siyaset Bilimi ve Kamu Yönetimi</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">126K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">178K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 52K</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- İstanbul Medipol Üniversitesi -->
-            <div class="section" id="uni-medipol">
-                <div class="section-title">İstanbul Medipol Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">Lojistik Yönetimi</div>
-                        <div class="card-uni">Lojistik Yönetimi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">130K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">162K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 32K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Siyaset Bilimi ve Kamu Yönetimi</div>
-                        <div class="card-uni">Siyaset Bilimi ve Kamu Yönetimi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">130K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">157K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 27K</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- İstanbul Beykent Üniversitesi -->
-            <div class="section" id="uni-beykent">
-                <div class="section-title">İstanbul Beykent Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">İktisat</div>
-                        <div class="card-uni">İktisat (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">125K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">173K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 48K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Uluslararası İlişkiler</div>
-                        <div class="card-uni">Uluslararası İlişkiler (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">144K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">176K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 32K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Siyaset Bilimi ve Kamu Yönetimi</div>
-                        <div class="card-uni">Siyaset Bilimi ve Kamu Yönetimi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">178K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">205K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 27K</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- İstanbul Aydın Üniversitesi -->
-            <div class="section" id="uni-aydin">
-                <div class="section-title">İstanbul Aydın Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">İşletme</div>
-                        <div class="card-uni">İşletme (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">113K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">144K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 31K</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Siyaset Bilimi ve Uluslararası İlişkiler</div>
-                        <div class="card-uni">Siyaset Bilimi ve Uluslararası İlişkiler (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">106K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">137K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 31K</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- İstanbul Kültür Üniversitesi -->
-            <div class="section" id="uni-kultur">
-                <div class="section-title">İstanbul Kültür Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">İşletme</div>
-                        <div class="card-uni">İşletme (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">111K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">138K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 27K</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- İstanbul Gelişim Üniversitesi -->
-            <div class="section" id="uni-gelisim">
-                <div class="section-title">İstanbul Gelişim Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">Yönetim Bilişim Sistemleri</div>
-                        <div class="card-uni">Yönetim Bilişim Sistemleri (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">100K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank" style="font-size:13px;color:#fbbf24;">Yok</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-bolum">Yönetim Bilişim Sistemleri</div>
-                        <div class="card-uni">Yönetim Bilişim Sistemleri (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">107K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">107K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff" style="text-align:center;margin-top:6px;color:#9ca3af;">— 0K</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diğer Üniversiteler -->
-            <div class="section" id="uni-diger">
-                <div class="section-title">Diğer Üniversiteler</div>
-
-                <div class="uni-section-title">İstanbul Sabahattin Zaim Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">İktisat</div>
-                        <div class="card-uni">İktisat</div>
-                        <div class="badges-row">
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">134K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank" style="font-size:13px;color:#fbbf24;">Yok</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="uni-section-title">İstinye Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">Uluslararası İlişkiler</div>
-                        <div class="card-uni">Uluslararası İlişkiler (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">129K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">156K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 27K</div>
-                    </div>
-                </div>
-
-                <div class="uni-section-title">İstanbul Ticaret Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">Lojistik Yönetimi</div>
-                        <div class="card-uni">Lojistik Yönetimi (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">136K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">167K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 31K</div>
-                    </div>
-                </div>
-
-                <div class="uni-section-title">İstanbul 29 Mayıs Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">Siyaset Bilimi ve Uluslararası İlişkiler</div>
-                        <div class="card-uni">Siyaset Bilimi ve Uluslararası İlişkiler (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">129K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">147K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 18K</div>
-                    </div>
-                </div>
-
-                <div class="uni-section-title">Üsküdar Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">Siyaset Bilimi ve Uluslararası İlişkiler</div>
-                        <div class="card-uni">Siyaset Bilimi ve Uluslararası İlişkiler (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik">İngilizce Hazırlık (%100 İngilizce)</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">129K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">154K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 25K</div>
-                    </div>
-                </div>
-
-                <div class="uni-section-title">İstanbul Gedik Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">Yönetim Bilişim Sistemleri</div>
-                        <div class="card-uni">Yönetim Bilişim Sistemleri (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">110K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">128K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 18K</div>
-                    </div>
-                </div>
-
-                <div class="uni-section-title">İstanbul Topkapı Üniversitesi</div>
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-bolum">Yönetim Bilişim Sistemleri</div>
-                        <div class="card-uni">Yönetim Bilişim Sistemleri (Burslu)</div>
-                        <div class="badges-row">
-                            <span class="badge badge-burslu">Burslu</span>
-                            <span class="badge badge-hazirlik-yok">Hazırlık Yok</span>
-                        </div>
-                        <div class="siralama-box">
-                            <div class="siralama-item">
-                                <div class="year">2025</div>
-                                <div class="rank">118K</div>
-                            </div>
-                            <div class="siralama-item">
-                                <div class="year">2024</div>
-                                <div class="rank">127K</div>
-                            </div>
-                        </div>
-                        <div class="rank-diff rank-up" style="text-align:center;margin-top:6px;">▲ 9K</div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
-        function showSection(id, btn) {
-            const sections = document.querySelectorAll('#bolum-view > .section');
-            sections.forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+        // ═══════════ TYPEWRITER ═══════════
+        const typeText = "Veteriner Fakültesi sıralamaları ve netleri nedir?";
+        const typeEl = document.getElementById('typewriter');
+        let ci = 0;
 
-            const tabs = document.querySelectorAll('#bolum-tabs .tab-btn');
-            tabs.forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        function showUniSection(id, btn) {
-            const sections = document.querySelectorAll('#uni-view > .section');
-            sections.forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-
-            const tabs = document.querySelectorAll('#uni-tabs .tab-btn');
-            tabs.forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        function switchView(view) {
-            const viewBtns = document.querySelectorAll('.view-btn');
-            viewBtns.forEach(b => b.classList.remove('active'));
-
-            if (view === 'bolum') {
-                document.getElementById('bolum-view').style.display = 'block';
-                document.getElementById('uni-view').style.display = 'none';
-                viewBtns[0].classList.add('active');
-            } else {
-                document.getElementById('bolum-view').style.display = 'none';
-                document.getElementById('uni-view').style.display = 'block';
-                viewBtns[1].classList.add('active');
+        function typeWriter() {
+            if (ci < typeText.length) {
+                typeEl.textContent = typeText.substring(0, ci + 1);
+                ci++;
+                setTimeout(typeWriter, 50);
             }
         }
+        setTimeout(typeWriter, 600);
+
+        // ═══════════ PARTICLES ═══════════
+        (function createParticles() {
+            const c = document.getElementById('particles');
+            const colors = [
+                'rgba(220, 38, 38, 0.2)',
+                'rgba(34, 197, 94, 0.2)',
+                'rgba(30, 58, 95, 0.3)',
+                'rgba(239, 68, 68, 0.15)',
+                'rgba(22, 101, 52, 0.2)'
+            ];
+            for (let i = 0; i < 25; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 2.5 + 1;
+                Object.assign(p.style, {
+                    left: Math.random() * 100 + '%',
+                    width: size + 'px',
+                    height: size + 'px',
+                    background: colors[Math.floor(Math.random() * colors.length)],
+                    animationDuration: (Math.random() * 12 + 10) + 's',
+                    animationDelay: (Math.random() * 12) + 's'
+                });
+                c.appendChild(p);
+            }
+        })();
+
+        // ═══════════ START EXPERIENCE ═══════════
+        function startExperience() {
+            const ss = document.getElementById('search-screen');
+            const mc = document.getElementById('main-content');
+            const btn = document.getElementById('searchBtn');
+
+            btn.style.transform = 'scale(1.6)';
+            btn.style.opacity = '0.4';
+
+            setTimeout(() => {
+                ss.classList.add('hide');
+                mc.classList.add('show');
+
+                setTimeout(() => {
+                    ss.style.display = 'none';
+                    initObserver();
+                }, 1000);
+            }, 400);
+        }
+
+        // ═══════════ INTERSECTION OBSERVER ═══════════
+        function initObserver() {
+            const els = document.querySelectorAll('[data-reveal]');
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const d = parseInt(entry.target.getAttribute('data-delay') || 0);
+                        setTimeout(() => {
+                            const el = entry.target;
+
+                            if (el.classList.contains('stat-card')) {
+                                el.classList.add('revealed-scale');
+                                const num = el.querySelector('.stat-number');
+                                if (num) {
+                                    const target = parseInt(num.dataset.count);
+                                    const format = num.dataset.format;
+                                    animateCount(num, target, format);
+                                }
+                            } else if (el.classList.contains('divider')) {
+                                el.classList.add('revealed-divider');
+                            } else {
+                                el.classList.add('revealed');
+                            }
+                        }, d);
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+            els.forEach(el => obs.observe(el));
+        }
+
+        // ═══════════ COUNTER ANIMATION ═══════════
+        function animateCount(el, target, format) {
+            let cur = 0;
+            const dur = 1600;
+            const step = target / (dur / 16);
+            (function update() {
+                cur += step;
+                if (cur < target) {
+                    const val = Math.floor(cur);
+                    el.textContent = format === 'dot' ? val.toLocaleString('tr-TR') : val;
+                    requestAnimationFrame(update);
+                } else {
+                    el.textContent = format === 'dot' ? target.toLocaleString('tr-TR') : target;
+                }
+            })();
+        }
+
+        // ═══════════ PROGRESS BAR ═══════════
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement;
+            const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+            document.getElementById('progressBar').style.width = Math.min(pct, 100) + '%';
+        });
+
+        // ═══════════ KEYBOARD SUPPORT ═══════════
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const ss = document.getElementById('search-screen');
+                if (!ss.classList.contains('hide')) startExperience();
+            }
+        });
     </script>
 </body>
 </html>
+```
