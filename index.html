@@ -1,1465 +1,996 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Veteriner Fakültesi Rehberi</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        :root {
-            --navy: #0a1628;
-            --navy-light: #112240;
-            --navy-mid: #0d1f3c;
-            --red: #dc2626;
-            --red-soft: #ef4444;
-            --red-glow: rgba(220, 38, 38, 0.3);
-            --green: #166534;
-            --green-soft: #22c55e;
-            --green-glow: rgba(22, 101, 52, 0.3);
-            --accent-1: #1e3a5f;
-            --accent-2: #7f1d1d;
-            --glass: rgba(17, 34, 64, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-border-hover: rgba(255, 255, 255, 0.15);
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--navy);
-            color: #e2e8f0;
-            overflow-x: hidden;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* ═══════════ PROGRESS BAR ═══════════ */
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            width: 0%;
-            background: linear-gradient(90deg, var(--red), var(--green-soft), var(--red-soft));
-            z-index: 9999;
-            transition: width 0.15s ease-out;
-            border-radius: 0 2px 2px 0;
-        }
-
-        /* ═══════════ PARTICLES ═══════════ */
-        .particles {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            animation: floatUp linear infinite;
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 0.5; }
-            100% { transform: translateY(-50px) rotate(720deg); opacity: 0; }
-        }
-
-        /* ═══════════ SEARCH SCREEN ═══════════ */
-        #search-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            background: var(--navy);
-            transition: all 1.2s cubic-bezier(0.76, 0, 0.24, 1);
-        }
-
-        #search-screen::before {
-            content: '';
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(220, 38, 38, 0.06), transparent 70%);
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: searchGlow 5s ease-in-out infinite;
-        }
-
-        @keyframes searchGlow {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
-            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.6; }
-        }
-
-        #search-screen.hide {
-            opacity: 0;
-            transform: scale(1.15);
-            pointer-events: none;
-        }
-
-        .search-icon-top {
-            font-size: 48px;
-            margin-bottom: 20px;
-            animation: pawBounce 2s ease-in-out infinite;
-            position: relative;
-            z-index: 2;
-        }
-
-        @keyframes pawBounce {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-8px) rotate(-5deg); }
-            75% { transform: translateY(-4px) rotate(5deg); }
-        }
-
-        .search-title {
-            font-size: clamp(15px, 3.5vw, 22px);
-            font-weight: 300;
-            color: #64748b;
-            margin-bottom: 32px;
-            letter-spacing: 0.5px;
-            text-align: center;
-            padding: 0 20px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: rgba(17, 34, 64, 0.8);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1.5px solid rgba(255, 255, 255, 0.1);
-            border-radius: 60px;
-            padding: 14px 18px;
-            width: min(620px, 92vw);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            z-index: 2;
-        }
-
-        .search-box::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            background: linear-gradient(135deg, var(--red), var(--green-soft), var(--red-soft), var(--green));
-            border-radius: 60px;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            background-size: 300% 300%;
-            animation: gradientShift 4s ease infinite;
-        }
-
-        .search-box:hover::before,
-        .search-box:focus-within::before {
-            opacity: 1;
-        }
-
-        .search-box:hover,
-        .search-box:focus-within {
-            border-color: transparent;
-            transform: scale(1.02);
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .search-text {
-            flex: 1;
-            font-size: clamp(12px, 2.6vw, 17px);
-            color: #94a3b8;
-            font-weight: 400;
-            overflow: hidden;
-            min-width: 0;
-        }
-
-        .search-text span {
-            border-right: 2px solid var(--red-soft);
-            padding-right: 2px;
-            animation: blink 1s step-end infinite;
-            white-space: nowrap;
-        }
-
-        @keyframes blink {
-            50% { border-color: transparent; }
-        }
-
-        @media (max-width: 420px) {
-            .search-text span {
-                white-space: normal;
-                word-break: break-word;
-                line-height: 1.5;
-                display: inline;
-            }
-            .search-box {
-                padding: 14px 14px;
-            }
-        }
-
-        .search-btn {
-            width: 48px;
-            height: 48px;
-            border: none;
-            background: linear-gradient(135deg, var(--red), #991b1b);
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 12px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            flex-shrink: 0;
-        }
-
-        .search-btn:hover {
-            transform: scale(1.18) rotate(8deg);
-            box-shadow: 0 0 40px var(--red-glow);
-        }
-
-        .search-btn:active {
-            transform: scale(0.92);
-        }
-
-        .search-btn i {
-            font-size: 18px;
-            color: #fff;
-        }
-
-        .hint-text {
-            margin-top: 24px;
-            color: #475569;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            animation: pulse 2.5s ease-in-out infinite;
-            position: relative;
-            z-index: 2;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
-        }
-
-        /* ═══════════ MAIN CONTENT ═══════════ */
-        #main-content {
-            display: none;
-            opacity: 0;
-        }
-
-        #main-content.show {
-            display: block;
-            animation: contentIn 1.2s ease 0.3s forwards;
-        }
-
-        @keyframes contentIn {
-            to { opacity: 1; }
-        }
-
-        /* ═══════════ HERO ═══════════ */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            padding: 40px 20px;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, rgba(220, 38, 38, 0.08), transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: heroGlow 5s ease-in-out infinite;
-        }
-
-        @keyframes heroGlow {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
-            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 0.8; }
-        }
-
-        .hero-icon {
-            width: 90px;
-            height: 90px;
-            border-radius: 28px;
-            background: rgba(220, 38, 38, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(220, 38, 38, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 28px;
-            font-size: 38px;
-            color: var(--red-soft);
-            opacity: 0;
-            transform: translateY(30px) scale(0.8);
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 20px;
-            background: rgba(22, 101, 52, 0.15);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(34, 197, 94, 0.2);
-            border-radius: 50px;
-            font-size: 13px;
-            color: var(--green-soft);
-            margin-bottom: 28px;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .hero h1 {
-            font-size: clamp(32px, 7vw, 72px);
-            font-weight: 900;
-            line-height: 1.08;
-            margin-bottom: 20px;
-            opacity: 0;
-            transform: translateY(50px);
-            letter-spacing: -2px;
-        }
-
-        .hero h1 .gradient-text {
-            background: linear-gradient(135deg, var(--red-soft), #fca5a5, var(--red));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero h1 .gradient-text-2 {
-            background: linear-gradient(135deg, var(--green-soft), #86efac, #166534);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero > p {
-            font-size: clamp(15px, 2.2vw, 19px);
-            color: #64748b;
-            max-width: 520px;
-            line-height: 1.8;
-            opacity: 0;
-            transform: translateY(40px);
-            font-weight: 300;
-            padding: 0 20px;
-        }
-
-        .hero-arrow {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            color: #334155;
-            font-size: 20px;
-            animation: arrowFloat 2s ease-in-out infinite;
-        }
-
-        @keyframes arrowFloat {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(12px); }
-        }
-
-        /* ═══════════ SECTIONS ═══════════ */
-        .content-section {
-            padding: 100px 20px;
-            position: relative;
-        }
-
-        .section-inner {
-            max-width: 1100px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .section-bg-accent {
-            background: linear-gradient(180deg, transparent, rgba(220, 38, 38, 0.02) 50%, transparent);
-        }
-
-        .section-bg-green {
-            background: linear-gradient(180deg, transparent, rgba(22, 101, 52, 0.03) 50%, transparent);
-        }
-
-        /* ═══════════ SECTION HEADER ═══════════ */
-        .section-header {
-            text-align: center;
-            margin-bottom: 56px;
-        }
-
-        .section-number {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: var(--red-soft);
-            font-weight: 600;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .section-number.green {
-            color: var(--green-soft);
-        }
-
-        .section-header h2 {
-            font-size: clamp(26px, 5vw, 44px);
-            font-weight: 800;
-            opacity: 0;
-            transform: translateY(30px);
-            letter-spacing: -0.5px;
-        }
-
-        .section-header .subtitle {
-            margin-top: 14px;
-            color: #64748b;
-            font-size: 17px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0;
-            transform: translateY(20px);
-            font-weight: 300;
-        }
-
-        .divider {
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--red), var(--green-soft));
-            margin: 0 auto 48px;
-            border-radius: 10px;
-            opacity: 0;
-            transform: scaleX(0);
-        }
-
-        /* ═══════════ UNIVERSITY CARDS ═══════════ */
-        .uni-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 20px;
-        }
-
-        .uni-card {
-            background: rgba(17, 34, 64, 0.5);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 28px 24px;
-            opacity: 0;
-            transform: translateY(60px);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .uni-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            border-radius: 24px 24px 0 0;
-        }
-
-        .uni-card:nth-child(1)::before {
-            background: linear-gradient(90deg, #fbbf24, var(--red-soft), #fbbf24);
-        }
-        .uni-card:nth-child(2)::before {
-            background: linear-gradient(90deg, #c0c0c0, var(--red-soft), #c0c0c0);
-        }
-        .uni-card:nth-child(3)::before {
-            background: linear-gradient(90deg, #cd7f32, var(--green-soft), #cd7f32);
-        }
-        .uni-card:nth-child(4)::before {
-            background: linear-gradient(90deg, var(--red-soft), var(--green-soft));
-        }
-        .uni-card:nth-child(5)::before {
-            background: linear-gradient(90deg, var(--green-soft), var(--red-soft));
-        }
-
-        .uni-card:hover {
-            transform: translateY(-6px) !important;
-            border-color: var(--glass-border-hover);
-            background: rgba(17, 34, 64, 0.7);
-        }
-
-        .uni-card-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            gap: 12px;
-        }
-
-        .uni-rank-badge {
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 900;
-            flex-shrink: 0;
-        }
-
-        .uni-card:nth-child(1) .uni-rank-badge {
-            background: rgba(251, 191, 36, 0.15);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-        .uni-card:nth-child(2) .uni-rank-badge {
-            background: rgba(192, 192, 192, 0.15);
-            color: #c0c0c0;
-            border: 1px solid rgba(192, 192, 192, 0.3);
-        }
-        .uni-card:nth-child(3) .uni-rank-badge {
-            background: rgba(205, 127, 50, 0.15);
-            color: #cd7f32;
-            border: 1px solid rgba(205, 127, 50, 0.3);
-        }
-        .uni-card:nth-child(4) .uni-rank-badge,
-        .uni-card:nth-child(5) .uni-rank-badge {
-            background: rgba(100, 116, 139, 0.15);
-            color: #94a3b8;
-            border: 1px solid rgba(100, 116, 139, 0.3);
-        }
-
-        .uni-card-name {
-            font-size: 17px;
-            font-weight: 700;
-            color: #f1f5f9;
-            line-height: 1.3;
-            flex: 1;
-        }
-
-        .uni-card-lang {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
-        .lang-tr {
-            background: rgba(220, 38, 38, 0.12);
-            color: #fca5a5;
-            border: 1px solid rgba(220, 38, 38, 0.25);
-        }
-
-        .lang-en {
-            background: rgba(34, 197, 94, 0.12);
-            color: #86efac;
-            border: 1px solid rgba(34, 197, 94, 0.25);
-        }
-
-        .uni-stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .uni-stat-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-            padding: 14px 12px;
-            text-align: center;
-        }
-
-        .uni-stat-label {
-            font-size: 11px;
-            color: #64748b;
-            font-weight: 500;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-
-        .uni-stat-value {
-            font-size: 22px;
-            font-weight: 800;
-            color: #f1f5f9;
-            letter-spacing: -0.5px;
-        }
-
-        .uni-stat-value.red { color: var(--red-soft); }
-        .uni-stat-value.green { color: var(--green-soft); }
-
-        .uni-diff-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 10px;
-            background: rgba(34, 197, 94, 0.06);
-            border: 1px solid rgba(34, 197, 94, 0.12);
-            border-radius: 12px;
-            margin-bottom: 14px;
-        }
-
-        .uni-diff-row i {
-            color: var(--green-soft);
-            font-size: 12px;
-        }
-
-        .uni-diff-text {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--green-soft);
-        }
-
-        .uni-nets-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .net-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-            padding: 14px 12px;
-            text-align: center;
-        }
-
-        .net-box-label {
-            font-size: 11px;
-            color: #64748b;
-            font-weight: 600;
-            margin-bottom: 6px;
-            letter-spacing: 1px;
-        }
-
-        .net-box-value {
-            font-size: 20px;
-            font-weight: 800;
-        }
-
-        .net-tyt { color: #fb923c; }
-        .net-ayt { color: #a78bfa; }
-
-        /* ═══════════ COMPARISON TABLE (Mobile friendly) ═══════════ */
-        .comparison-section {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            border-radius: 20px;
-        }
-
-        .comparison-table {
-            width: 100%;
-            min-width: 700px;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: rgba(17, 34, 64, 0.5);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(40px);
-        }
-
-        .comparison-table thead th {
-            background: rgba(220, 38, 38, 0.08);
-            padding: 16px 14px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .comparison-table thead th:first-child {
-            text-align: left;
-            padding-left: 24px;
-        }
-
-        .comparison-table tbody td {
-            padding: 18px 14px;
-            font-size: 14px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            color: #cbd5e1;
-            transition: background 0.3s;
-        }
-
-        .comparison-table tbody td:first-child {
-            text-align: left;
-            padding-left: 24px;
-            font-weight: 600;
-            color: #f1f5f9;
-        }
-
-        .comparison-table tbody tr:hover td {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .comparison-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .table-badge-up {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            background: rgba(34, 197, 94, 0.12);
-            color: var(--green-soft);
-            border: 1px solid rgba(34, 197, 94, 0.25);
-        }
-
-        .scroll-hint {
-            display: none;
-            text-align: center;
-            padding: 12px;
-            color: #475569;
-            font-size: 12px;
-            gap: 6px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @media (max-width: 750px) {
-            .scroll-hint {
-                display: flex;
-            }
-        }
-
-        /* ═══════════ INFO CARDS ═══════════ */
-        .info-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .info-card {
-            background: rgba(17, 34, 64, 0.5);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 28px 24px;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .info-card:hover {
-            transform: translateY(-4px) !important;
-            border-color: var(--glass-border-hover);
-        }
-
-        .info-card-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            margin-bottom: 18px;
-        }
-
-        .info-card h3 {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #f1f5f9;
-        }
-
-        .info-card p {
-            color: #64748b;
-            font-size: 14px;
-            line-height: 1.75;
-        }
-
-        /* ═══════════ STATS GRID ═══════════ */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .stat-card {
-            text-align: center;
-            padding: 36px 20px;
-            background: rgba(17, 34, 64, 0.5);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            opacity: 0;
-            transform: scale(0.85);
-        }
-
-        .stat-icon {
-            font-size: 24px;
-            margin-bottom: 12px;
-        }
-
-        .stat-number {
-            font-size: 44px;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--red-soft), #fca5a5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-number.green-grad {
-            background: linear-gradient(135deg, var(--green-soft), #86efac);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-label {
-            color: #64748b;
-            font-size: 13px;
-            margin-top: 6px;
-            font-weight: 500;
-        }
-
-        /* ═══════════ QUOTE ═══════════ */
-        .quote-section {
-            min-height: 50vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .quote-wrap {
-            text-align: center;
-            max-width: 600px;
-            padding: 0 20px;
-        }
-
-        .quote-icon {
-            font-size: 40px;
-            color: rgba(220, 38, 38, 0.2);
-            margin-bottom: 24px;
-            opacity: 0;
-        }
-
-        .quote-wrap blockquote {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(22px, 4vw, 32px);
-            font-weight: 400;
-            font-style: italic;
-            line-height: 1.6;
-            color: #cbd5e1;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .quote-author {
-            margin-top: 24px;
-            color: var(--red-soft);
-            font-size: 15px;
-            opacity: 0;
-            transform: translateY(10px);
-            font-weight: 500;
-        }
-
-        /* ═══════════ FOOTER ═══════════ */
-        .footer {
-            text-align: center;
-            padding: 50px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .footer p {
-            color: #334155;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .footer .heart {
-            color: var(--red-soft);
-            animation: heartBeat 1.5s ease infinite;
-        }
-
-        @keyframes heartBeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        /* ═══════════ REVEALED ═══════════ */
-        .revealed {
-            opacity: 1 !important;
-            transform: none !important;
-            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .revealed-scale {
-            opacity: 1 !important;
-            transform: scale(1) !important;
-            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .revealed-divider {
-            opacity: 1 !important;
-            transform: scaleX(1) !important;
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* ═══════════ RESPONSIVE ═══════════ */
-        @media (max-width: 640px) {
-            .content-section {
-                padding: 70px 16px;
-            }
-            .uni-cards-grid {
-                grid-template-columns: 1fr;
-            }
-            .info-cards-grid {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .uni-card {
-                padding: 22px 18px;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>İngilizce Mütercim ve Tercümanlık</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+
+:root{
+  --bg:#070c14;
+  --bg-2:#0b1220;
+  --surface:rgba(148,170,200,.055);
+  --surface-2:rgba(148,170,200,.09);
+  --line:rgba(160,185,220,.10);
+  --line-2:rgba(160,185,220,.20);
+
+  --blue:#3b82f6;
+  --blue-l:#60a5fa;
+  --blue-xl:#93c5fd;
+  --blue-d:#1d4ed8;
+  --sky:#38bdf8;
+
+  --gray:#94a3b8;
+  --gray-l:#cbd5e1;
+  --gray-d:#64748b;
+  --gray-xd:#334155;
+
+  --txt:#e8eef7;
+  --txt-2:#9fb0c6;
+  --txt-3:#64748b;
+}
+
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  overflow-x:hidden;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ══════ AMBIENT BG ══════ */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5}
+.orb-1{width:46vw;height:46vw;background:radial-gradient(circle,rgba(59,130,246,.22),transparent 68%);top:-12%;left:-10%;animation:drift1 22s ease-in-out infinite}
+.orb-2{width:38vw;height:38vw;background:radial-gradient(circle,rgba(100,116,139,.2),transparent 68%);bottom:-10%;right:-8%;animation:drift2 26s ease-in-out infinite}
+.orb-3{width:30vw;height:30vw;background:radial-gradient(circle,rgba(56,189,248,.14),transparent 68%);top:45%;left:55%;animation:drift1 30s ease-in-out infinite reverse}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(6%,8%) scale(1.18)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-7%,-6%) scale(1.14)}}
+
+.grid-overlay{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35;
+  background-image:linear-gradient(rgba(148,170,200,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(148,170,200,.035) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000,transparent 75%);
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000,transparent 75%);
+}
+
+/* ══════ PROGRESS ══════ */
+.progress-bar{
+  position:fixed;top:0;left:0;height:2.5px;width:0%;
+  background:linear-gradient(90deg,var(--blue-d),var(--blue),var(--sky));
+  z-index:9999;transition:width .12s linear;
+  box-shadow:0 0 14px rgba(59,130,246,.55);
+}
+
+/* ══════ NAV ══════ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  display:none;align-items:center;justify-content:space-between;
+  gap:12px;padding:12px max(16px,env(safe-area-inset-left));
+  background:rgba(7,12,20,.72);
+  backdrop-filter:blur(28px) saturate(180%);
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
+  border-bottom:1px solid var(--line);
+  transform:translateY(-110%);transition:transform .55s cubic-bezier(.16,1,.3,1);
+}
+.nav.visible{transform:translateY(0)}
+#main-content.show ~ .nav{display:flex}
+.nav-brand{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;letter-spacing:.4px;white-space:nowrap;flex-shrink:0}
+.nav-brand .dot{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,var(--blue),var(--blue-d));font-size:11px;color:#fff}
+.nav-links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{
+  color:var(--txt-2);text-decoration:none;font-size:12.5px;font-weight:500;
+  padding:7px 13px;border-radius:30px;white-space:nowrap;transition:.3s;
+  border:1px solid transparent;
+}
+.nav-links a:hover{color:var(--txt);background:var(--surface);border-color:var(--line)}
+
+/* ══════ SEARCH SCREEN ══════ */
+#search-screen{
+  position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:1000;background:var(--bg);
+  transition:all 1.15s cubic-bezier(.76,0,.24,1);padding:24px;
+}
+#search-screen.hide{opacity:0;transform:scale(1.14);pointer-events:none}
+#search-screen::before{
+  content:'';position:absolute;width:min(680px,120vw);height:min(680px,120vw);
+  background:radial-gradient(circle,rgba(59,130,246,.09),transparent 68%);
+  top:42%;left:50%;transform:translate(-50%,-50%);animation:sGlow 6s ease-in-out infinite;
+}
+@keyframes sGlow{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.45}50%{transform:translate(-50%,-50%) scale(1.45);opacity:.85}}
+
+.s-emblem{
+  position:relative;z-index:2;width:76px;height:76px;border-radius:24px;
+  display:grid;place-items:center;margin-bottom:22px;font-size:28px;color:var(--blue-l);
+  background:linear-gradient(145deg,rgba(59,130,246,.14),rgba(148,163,184,.06));
+  border:1px solid rgba(96,165,250,.22);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 18px 50px -18px rgba(59,130,246,.45);
+  animation:emblemFloat 4s ease-in-out infinite;
+}
+@keyframes emblemFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+.search-title{
+  position:relative;z-index:2;font-size:clamp(14px,3.4vw,21px);font-weight:300;
+  color:var(--txt-3);margin-bottom:28px;letter-spacing:.3px;text-align:center;
+}
+.search-box{
+  position:relative;z-index:2;display:flex;align-items:center;
+  background:rgba(148,170,200,.07);
+  backdrop-filter:blur(34px) saturate(170%);-webkit-backdrop-filter:blur(34px) saturate(170%);
+  border:1.5px solid var(--line-2);border-radius:60px;
+  padding:13px 15px 13px 20px;width:min(640px,100%);
+  transition:all .5s cubic-bezier(.16,1,.3,1);
+}
+.search-box::before{
+  content:'';position:absolute;inset:-1.5px;border-radius:60px;z-index:-1;opacity:0;
+  background:linear-gradient(135deg,var(--blue-d),var(--sky),var(--gray),var(--blue));
+  background-size:300% 300%;animation:gShift 5s ease infinite;transition:opacity .5s;
+}
+.search-box:hover::before,.search-box:focus-within::before{opacity:1}
+.search-box:hover,.search-box:focus-within{border-color:transparent;transform:scale(1.015)}
+@keyframes gShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+.search-text{flex:1;font-size:clamp(11.5px,2.6vw,16px);color:var(--gray-l);font-weight:400;overflow:hidden;min-width:0}
+.search-text span{border-right:2px solid var(--blue-l);padding-right:2px;animation:blink 1s step-end infinite;white-space:nowrap}
+@keyframes blink{50%{border-color:transparent}}
+@media(max-width:460px){
+  .search-text span{white-space:normal;word-break:break-word;line-height:1.55;display:inline}
+  .search-box{padding:13px 13px 13px 17px}
+}
+.search-btn{
+  width:46px;height:46px;border:none;border-radius:50%;cursor:pointer;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),var(--blue-d));
+  display:grid;place-items:center;margin-left:10px;
+  transition:all .4s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 10px 26px -8px rgba(59,130,246,.6);
+}
+.search-btn:hover{transform:scale(1.15) rotate(8deg);box-shadow:0 0 42px rgba(59,130,246,.55)}
+.search-btn:active{transform:scale(.92)}
+.search-btn i{font-size:17px;color:#fff}
+
+.hint-text{
+  position:relative;z-index:2;margin-top:22px;color:var(--gray-xd);font-size:12.5px;
+  display:flex;align-items:center;gap:8px;animation:pulse 2.6s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* ══════ MAIN ══════ */
+#main-content{display:none;opacity:0;position:relative;z-index:1}
+#main-content.show{display:block;animation:cIn 1.1s ease .25s forwards}
+@keyframes cIn{to{opacity:1}}
+
+.section{padding:clamp(70px,11vw,115px) max(18px,env(safe-area-inset-left));position:relative}
+.inner{max-width:1120px;margin:0 auto;width:100%}
+
+/* ══════ HERO ══════ */
+.hero{
+  min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;position:relative;padding:90px 20px 70px;
+}
+.hero-emblem{
+  width:84px;height:84px;border-radius:26px;display:grid;place-items:center;
+  font-size:32px;color:var(--blue-l);margin-bottom:26px;
+  background:linear-gradient(145deg,rgba(59,130,246,.15),rgba(148,163,184,.05));
+  border:1px solid rgba(96,165,250,.2);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 22px 60px -22px rgba(59,130,246,.5);
+  opacity:0;transform:translateY(28px) scale(.82);
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:50px;
+  font-size:12.5px;font-weight:500;color:var(--blue-xl);margin-bottom:26px;letter-spacing:.3px;
+  background:rgba(59,130,246,.09);border:1px solid rgba(96,165,250,.2);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  opacity:0;transform:translateY(18px);
+}
+.hero h1{
+  font-size:clamp(33px,7.4vw,76px);font-weight:900;line-height:1.05;letter-spacing:-2.2px;
+  margin-bottom:20px;opacity:0;transform:translateY(46px);
+}
+.g-blue{background:linear-gradient(135deg,#93c5fd,#3b82f6 55%,#1d4ed8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.g-gray{background:linear-gradient(135deg,#e2e8f0,#94a3b8 55%,#475569);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{
+  font-size:clamp(14.5px,2.2vw,18.5px);color:var(--txt-3);max-width:520px;line-height:1.8;
+  font-weight:300;opacity:0;transform:translateY(34px);
+}
+.hero-pills{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:30px;opacity:0;transform:translateY(26px)}
+.hero-pill{
+  display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:40px;
+  font-size:12.5px;font-weight:600;color:var(--gray-l);
+  background:var(--surface);border:1px solid var(--line);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+.hero-pill i{color:var(--blue-l);font-size:12px}
+.hero-arrow{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);opacity:0;color:var(--gray-xd);font-size:19px;animation:aFloat 2.2s ease-in-out infinite}
+@keyframes aFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(11px)}}
+
+/* ══════ SECTION HEADER ══════ */
+.s-head{text-align:center;margin-bottom:46px}
+.s-num{
+  display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;color:var(--blue-l);margin-bottom:14px;
+  opacity:0;transform:translateY(16px);
+}
+.s-num i{font-size:10px}
+.s-head h2{font-size:clamp(25px,5.2vw,43px);font-weight:800;letter-spacing:-1px;opacity:0;transform:translateY(26px)}
+.s-sub{margin:13px auto 0;color:var(--txt-3);font-size:clamp(13.5px,2vw,16.5px);max-width:520px;font-weight:300;line-height:1.7;opacity:0;transform:translateY(16px)}
+.divider{width:46px;height:3px;border-radius:10px;margin:0 auto 42px;background:linear-gradient(90deg,var(--blue-d),var(--sky));opacity:0;transform:scaleX(0)}
+
+/* ══════ SORT CONTROL ══════ */
+.sorter{
+  display:flex;gap:5px;padding:5px;border-radius:40px;margin:0 auto 32px;width:fit-content;max-width:100%;
+  background:var(--surface);border:1px solid var(--line);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  overflow-x:auto;scrollbar-width:none;opacity:0;transform:translateY(18px);
+}
+.sorter::-webkit-scrollbar{display:none}
+.sort-btn{
+  border:none;background:transparent;color:var(--txt-2);cursor:pointer;
+  padding:9px 17px;border-radius:40px;font-size:12.5px;font-weight:600;white-space:nowrap;
+  font-family:inherit;transition:all .35s cubic-bezier(.16,1,.3,1);
+}
+.sort-btn:hover{color:var(--txt)}
+.sort-btn.active{
+  background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;
+  box-shadow:0 8px 20px -8px rgba(59,130,246,.75);
+}
+
+/* ══════ UNI CARDS ══════ */
+.uni-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+.uni-card{
+  position:relative;border-radius:24px;padding:24px 22px 22px;overflow:hidden;
+  background:linear-gradient(160deg,rgba(148,170,200,.075),rgba(148,170,200,.03));
+  border:1px solid var(--line);
+  backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);
+  opacity:0;transform:translateY(48px);
+  transition:transform .5s cubic-bezier(.16,1,.3,1),border-color .4s,background .4s,box-shadow .4s;
+}
+.uni-card::before{
+  content:'';position:absolute;top:0;left:22px;right:22px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(147,197,253,.45),transparent);
+}
+.uni-card:hover{
+  transform:translateY(-6px)!important;border-color:var(--line-2);
+  background:linear-gradient(160deg,rgba(148,170,200,.11),rgba(148,170,200,.045));
+  box-shadow:0 26px 60px -26px rgba(0,0,0,.85);
+}
+.uc-top{display:flex;align-items:flex-start;gap:13px;margin-bottom:18px}
+.uc-rank{
+  width:42px;height:42px;border-radius:14px;flex-shrink:0;display:grid;place-items:center;
+  font-size:16px;font-weight:900;letter-spacing:-.5px;
+  background:rgba(59,130,246,.11);color:var(--blue-xl);border:1px solid rgba(96,165,250,.22);
+}
+.uni-card[data-top="1"] .uc-rank{background:linear-gradient(145deg,rgba(96,165,250,.3),rgba(29,78,216,.18));color:#dbeafe;border-color:rgba(147,197,253,.4);box-shadow:0 0 22px -6px rgba(59,130,246,.6)}
+.uc-name{flex:1;min-width:0}
+.uc-name h3{font-size:15.5px;font-weight:700;line-height:1.33;color:#f1f5f9;letter-spacing:-.2px}
+.uc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.2px}
+.tag-burs{background:rgba(56,189,248,.11);color:#7dd3fc;border:1px solid rgba(56,189,248,.24)}
+.tag-devlet{background:rgba(148,163,184,.1);color:var(--gray);border:1px solid rgba(148,163,184,.22)}
+.tag-vakif{background:rgba(59,130,246,.1);color:var(--blue-xl);border:1px solid rgba(96,165,250,.2)}
+
+.uc-ranks{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
+.rk-box{
+  background:rgba(148,170,200,.05);border:1px solid rgba(160,185,220,.07);
+  border-radius:15px;padding:13px 10px;text-align:center;
+}
+.rk-box.now{background:rgba(59,130,246,.09);border-color:rgba(96,165,250,.2)}
+.rk-lbl{font-size:10px;color:var(--txt-3);font-weight:600;letter-spacing:1.2px;margin-bottom:6px;text-transform:uppercase}
+.rk-val{font-size:21px;font-weight:800;letter-spacing:-.8px;color:var(--gray-l)}
+.rk-box.now .rk-val{color:var(--blue-xl)}
+
+.uc-diff{
+  display:flex;align-items:center;justify-content:center;gap:7px;padding:9px;
+  border-radius:13px;margin-bottom:14px;
+  background:rgba(56,189,248,.065);border:1px solid rgba(56,189,248,.14);
+}
+.uc-diff i{font-size:11px;color:var(--sky)}
+.uc-diff span{font-size:12px;font-weight:600;color:#7dd3fc}
+.uc-diff small{font-size:11px;color:var(--txt-3);font-weight:400}
+
+.uc-nets{display:flex;flex-direction:column;gap:12px}
+.net-row{display:flex;flex-direction:column;gap:6px}
+.net-head{display:flex;align-items:center;justify-content:space-between}
+.net-name{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--txt-2);letter-spacing:.3px}
+.net-name i{font-size:10.5px}
+.net-num{font-size:15px;font-weight:800;letter-spacing:-.3px}
+.net-num small{font-size:10px;font-weight:500;color:var(--txt-3);margin-left:2px}
+.net-track{height:6px;border-radius:10px;background:rgba(148,170,200,.09);overflow:hidden}
+.net-fill{height:100%;width:0;border-radius:10px;transition:width 1.3s cubic-bezier(.16,1,.3,1)}
+.fill-tyt{background:linear-gradient(90deg,var(--blue-d),var(--blue-l))}
+.fill-dil{background:linear-gradient(90deg,#475569,#cbd5e1)}
+.c-tyt{color:var(--blue-xl)}
+.c-dil{color:var(--gray-l)}
+
+/* ══════ TABLE ══════ */
+.table-wrap{
+  border-radius:22px;overflow:hidden;
+  background:linear-gradient(160deg,rgba(148,170,200,.07),rgba(148,170,200,.025));
+  border:1px solid var(--line);
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  opacity:0;transform:translateY(36px);
+}
+.ctable{width:100%;border-collapse:separate;border-spacing:0}
+.ctable thead th{
+  padding:15px 13px;font-size:10.5px;font-weight:700;color:var(--txt-3);
+  text-transform:uppercase;letter-spacing:1.4px;text-align:center;
+  background:rgba(59,130,246,.055);border-bottom:1px solid var(--line);
+}
+.ctable thead th:first-child{text-align:left;padding-left:22px}
+.ctable tbody td{
+  padding:16px 13px;font-size:13.5px;text-align:center;color:var(--gray-l);
+  border-bottom:1px solid rgba(160,185,220,.05);transition:background .3s;
+}
+.ctable tbody td:first-child{text-align:left;padding-left:22px;font-weight:600;color:#f1f5f9;font-size:13px}
+.ctable tbody tr:last-child td{border-bottom:none}
+.ctable tbody tr:hover td{background:rgba(148,170,200,.045)}
+.t-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;background:rgba(56,189,248,.1);color:#7dd3fc;border:1px solid rgba(56,189,248,.2)}
+.t-blue{color:var(--blue-xl);font-weight:700}
+.t-gray{color:var(--gray-l);font-weight:700}
+
+@media(max-width:780px){
+  .ctable thead{display:none}
+  .ctable,.ctable tbody,.ctable tr,.ctable td{display:block;width:100%}
+  .ctable tbody tr{
+    padding:16px;margin:12px;border-radius:18px;
+    background:rgba(148,170,200,.045);border:1px solid rgba(160,185,220,.08);
+  }
+  .ctable tbody tr:hover td{background:transparent}
+  .ctable tbody td{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:9px 0;text-align:right;border-bottom:1px solid rgba(160,185,220,.05);font-size:13px;
+  }
+  .ctable tbody td:first-child{
+    text-align:left;padding:0 0 11px;font-size:14.5px;
+    border-bottom:1px solid rgba(160,185,220,.1);margin-bottom:5px;
+  }
+  .ctable tbody td:last-child{border-bottom:none;padding-bottom:0}
+  .ctable tbody td::before{
+    content:attr(data-label);font-size:11px;color:var(--txt-3);
+    font-weight:600;letter-spacing:.8px;text-transform:uppercase;text-align:left;
+  }
+  .ctable tbody td:first-child::before{display:none}
+}
+
+/* ══════ INFO CARDS ══════ */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px}
+.info-card{
+  border-radius:22px;padding:26px 23px;
+  background:linear-gradient(160deg,rgba(148,170,200,.07),rgba(148,170,200,.025));
+  border:1px solid var(--line);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  opacity:0;transform:translateY(42px);
+  transition:transform .5s cubic-bezier(.16,1,.3,1),border-color .4s,box-shadow .4s;
+}
+.info-card:hover{transform:translateY(-5px)!important;border-color:var(--line-2);box-shadow:0 24px 54px -26px rgba(0,0,0,.85)}
+.ic-icon{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:19px;margin-bottom:16px}
+.info-card h3{font-size:16px;font-weight:700;margin-bottom:9px;color:#f1f5f9;letter-spacing:-.2px}
+.info-card p{color:var(--txt-3);font-size:13.5px;line-height:1.8}
+
+/* ══════ JOB LIST ══════ */
+.job-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:13px}
+.job-item{
+  display:flex;align-items:center;gap:14px;padding:18px;border-radius:18px;
+  background:rgba(148,170,200,.05);border:1px solid var(--line);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  opacity:0;transform:translateY(32px);
+  transition:transform .45s cubic-bezier(.16,1,.3,1),border-color .35s,background .35s;
+}
+.job-item:hover{transform:translateY(-4px)!important;border-color:rgba(96,165,250,.28);background:rgba(59,130,246,.065)}
+.job-ic{width:42px;height:42px;border-radius:13px;flex-shrink:0;display:grid;place-items:center;font-size:17px;background:rgba(59,130,246,.1);color:var(--blue-l);border:1px solid rgba(96,165,250,.16)}
+.job-tx h4{font-size:14px;font-weight:650;margin-bottom:3px;color:#eef2f7}
+.job-tx p{font-size:12px;color:var(--txt-3);line-height:1.5}
+
+/* ══════ STATS ══════ */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:16px}
+.stat-card{
+  text-align:center;padding:30px 16px;border-radius:22px;
+  background:linear-gradient(160deg,rgba(148,170,200,.07),rgba(148,170,200,.025));
+  border:1px solid var(--line);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  opacity:0;transform:scale(.86);
+}
+.st-ic{font-size:21px;margin-bottom:11px;color:var(--blue-l)}
+.st-num{font-size:clamp(30px,6.5vw,42px);font-weight:900;letter-spacing:-1.8px;background:linear-gradient(135deg,#bfdbfe,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.st-num.gray{background:linear-gradient(135deg,#e2e8f0,#64748b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.st-lbl{color:var(--txt-3);font-size:12px;margin-top:6px;font-weight:500;line-height:1.5}
+
+/* ══════ QUOTE ══════ */
+.quote-sec{min-height:46vh;display:flex;align-items:center;justify-content:center}
+.quote-wrap{text-align:center;max-width:620px;padding:0 10px}
+.q-ic{font-size:34px;color:rgba(96,165,250,.22);margin-bottom:22px;opacity:0}
+.quote-wrap blockquote{font-family:'Playfair Display',serif;font-size:clamp(21px,4.1vw,33px);font-style:italic;line-height:1.58;color:var(--gray-l);opacity:0;transform:translateY(26px)}
+.q-author{margin-top:22px;color:var(--blue-l);font-size:14.5px;font-weight:500;opacity:0;transform:translateY(10px)}
+
+/* ══════ FOOTER ══════ */
+.footer{text-align:center;padding:46px 20px calc(46px + env(safe-area-inset-bottom));border-top:1px solid rgba(160,185,220,.05)}
+.footer p{color:var(--gray-xd);font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px}
+.footer .heart{color:var(--blue);animation:hb 1.6s ease infinite}
+@keyframes hb{0%,100%{transform:scale(1)}50%{transform:scale(1.22)}}
+
+/* ══════ REVEAL ══════ */
+.rv{opacity:1!important;transform:none!important;transition:all .85s cubic-bezier(.16,1,.3,1)}
+.rv-s{opacity:1!important;transform:scale(1)!important;transition:all .85s cubic-bezier(.16,1,.3,1)}
+.rv-d{opacity:1!important;transform:scaleX(1)!important;transition:all .75s cubic-bezier(.16,1,.3,1)}
+
+/* ══════ RESPONSIVE ══════ */
+@media(max-width:680px){
+  .uni-grid{grid-template-columns:1fr}
+  .info-grid,.job-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .uni-card{padding:20px 18px}
+  .nav-brand span{display:none}
+}
+@media(max-width:360px){
+  .stats-grid{grid-template-columns:1fr}
+  .uc-ranks{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
 </head>
 <body>
 
-    <div class="progress-bar" id="progressBar"></div>
-    <div class="particles" id="particles"></div>
+<div class="progress-bar" id="progressBar"></div>
+<div class="ambient"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<div class="grid-overlay"></div>
 
-    <!-- ═══════════ SEARCH SCREEN ═══════════ -->
-    <div id="search-screen">
-        <div class="search-icon-top">🐾</div>
-        <p class="search-title">Merak ettiğin her şey bir tık uzağında</p>
-        <div class="search-box" id="searchBox">
-            <div class="search-text">
-                <span id="typewriter"></span>
+<!-- ══════ SEARCH SCREEN ══════ -->
+<div id="search-screen">
+  <div class="s-emblem"><i class="fas fa-language"></i></div>
+  <p class="search-title">Merak ettiğin her şey bir tık uzağında</p>
+  <div class="search-box">
+    <div class="search-text"><span id="typewriter"></span></div>
+    <button class="search-btn" id="searchBtn" onclick="startExperience()" aria-label="Ara"><i class="fas fa-search"></i></button>
+  </div>
+  <p class="hint-text"><i class="fas fa-arrow-up"></i> Büyütece bas, keşfet</p>
+</div>
+
+<!-- ══════ MAIN ══════ -->
+<div id="main-content">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-emblem" data-rv><i class="fas fa-language"></i></div>
+    <div class="hero-badge" data-rv data-d="150"><i class="fas fa-earth-europe"></i> 2025 Tercih Rehberi</div>
+    <h1 data-rv data-d="300">
+      <span class="g-blue">İngilizce Mütercim</span><br>
+      <span class="g-gray">ve Tercümanlık</span>
+    </h1>
+    <p class="hero-desc" data-rv data-d="480">
+      Hangi üniversite, kaç sıralama, kaç net gerekiyor?
+      Tüm veriler tek sayfada, sade ve net.
+    </p>
+    <div class="hero-pills" data-rv data-d="640">
+      <span class="hero-pill"><i class="fas fa-university"></i> 5 Üniversite</span>
+      <span class="hero-pill"><i class="fas fa-chart-simple"></i> 2 Yıllık Veri</span>
+      <span class="hero-pill"><i class="fas fa-bullseye"></i> Net Hedefleri</span>
+    </div>
+    <div class="hero-arrow" data-rv data-d="950"><i class="fas fa-chevron-down"></i></div>
+  </section>
+
+  <!-- 01 · SIRALAMALAR -->
+  <section class="section" id="siralama">
+    <div class="inner">
+      <div class="s-head">
+        <p class="s-num" data-rv><i class="fas fa-bookmark"></i> Bölüm 01</p>
+        <h2 data-rv data-d="100">Üniversite Sıralamaları</h2>
+        <p class="s-sub" data-rv data-d="200">Güncel sıralamalar, geçen yıl karşılaştırması ve gereken netler</p>
+      </div>
+      <div class="divider" data-rv data-d="270"></div>
+
+      <div class="sorter" data-rv data-d="320">
+        <button class="sort-btn active" data-sort="rank">Sıralamaya Göre</button>
+        <button class="sort-btn" data-sort="tyt">TYT Netine Göre</button>
+        <button class="sort-btn" data-sort="dil">Dil Netine Göre</button>
+      </div>
+
+      <div class="uni-grid" id="uniGrid">
+
+        <!-- 1 BAHÇEŞEHİR -->
+        <div class="uni-card" data-rv data-d="340" data-top="1" data-rank="4709" data-tyt="77.75" data-dil="72.50">
+          <div class="uc-top">
+            <div class="uc-rank">1</div>
+            <div class="uc-name">
+              <h3>Bahçeşehir Üniversitesi</h3>
+              <div class="uc-tags">
+                <span class="tag tag-burs"><i class="fas fa-award"></i> Burslu</span>
+                <span class="tag tag-vakif">Vakıf</span>
+              </div>
             </div>
-            <button class="search-btn" id="searchBtn" onclick="startExperience()" aria-label="Ara">
-                <i class="fas fa-search"></i>
-            </button>
+          </div>
+          <div class="uc-ranks">
+            <div class="rk-box now"><div class="rk-lbl">Bu Yıl</div><div class="rk-val">4.709</div></div>
+            <div class="rk-box"><div class="rk-lbl">Geçen Yıl</div><div class="rk-val">3.658</div></div>
+          </div>
+          <div class="uc-diff">
+            <i class="fas fa-arrow-trend-down"></i>
+            <span>1.051 sıra gevşedi</span><small>· daha ulaşılabilir</small>
+          </div>
+          <div class="uc-nets">
+            <div class="net-row">
+              <div class="net-head">
+                <span class="net-name"><i class="fas fa-pen-to-square c-tyt"></i> TYT NET</span>
+                <span class="net-num c-tyt">77,75<small>/120</small></span>
+              </div>
+              <div class="net-track"><div class="net-fill fill-tyt" data-w="64.8"></div></div>
+            </div>
+            <div class="net-row">
+              <div class="net-head">
+                <span class="net-name"><i class="fas fa-book-open c-dil"></i> DİL NET</span>
+                <span class="net-num c-dil">72,50<small>/80</small></span>
+              </div>
+              <div class="net-track"><div class="net-fill fill-dil" data-w="90.6"></div></div>
+            </div>
+          </div>
         </div>
-        <p class="hint-text"><i class="fas fa-arrow-up"></i> Büyütece bas, keşfet</p>
+
+        <!-- 2 İSTANBUL -->
+        <div class="uni-card" data-rv data-d="420" data-rank="5558" data-tyt="65.75" data-dil="76.25">
+          <div class="uc-top">
+            <div class="uc-rank">2</div>
+            <div class="uc-name">
+              <h3>İstanbul Üniversitesi</h3>
+              <div class="uc-tags"><span class="tag tag-devlet"><i class="fas fa-landmark"></i> Devlet</span></div>
+            </div>
+          </div>
+          <div class="uc-ranks">
+            <div class="rk-box now"><div class="rk-lbl">Bu Yıl</div><div class="rk-val">5.558</div></div>
+            <div class="rk-box"><div class="rk-lbl">Geçen Yıl</div><div class="rk-val">4.210</div></div>
+          </div>
+          <div class="uc-diff">
+            <i class="fas fa-arrow-trend-down"></i>
+            <span>1.348 sıra gevşedi</span><small>· daha ulaşılabilir</small>
+          </div>
+          <div class="uc-nets">
+            <div class="net-row">
+              <div class="net-head">
+                <span class="net-name"><i class="fas fa-pen-to-square c-tyt"></i> TYT NET</span>
+                <span class="net-num c-tyt">65,75<small>/120</small></span>
+              </div>
+              <div class="net-track"><div class="net-fill fill-tyt" data-w="54.8"></div></div>
+            </div>
+            <div class="net-row">
+              <div class="net-head">
+                <span class="net-name"><i class="fas fa-book-open c-dil"></i> DİL NET</span>
+                <span class="net-num c-dil">76,25<small>/80</small></span>
+              </div>
+              <div class="net-track"><div class="net-fill fill-dil" data-w="95.3"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 MARMARA -->
+        <div class="uni-card" data-rv data-d="500" data-rank="6302" data-tyt="63.25" data-dil="76.26">
+          <div class="uc-top">
+            <div class="uc-rank">3</div>
+            <div class="uc-name">
+              <h3>Marmara Üniversitesi</h3>
+              <div class="uc-tags"><span class="tag tag-devlet"><i class="fas fa-landmark"></i> Devlet</span></div>
+            </div>
+          </div>
+          <div class="uc-ranks">
+            <div class="rk-box now"><div class="rk-lbl">Bu Yıl</div><div class="rk-val">6.302</div></div>
+            <div class="rk-box"><div class="rk-lbl">Geçen Yıl</div><div class="rk-val">4.858</div></div>
+          </div>
+          <div class="uc-diff">
+            <i class="fas fa-arrow-trend-down"></i>
+            <span>1.444 sıra gevşedi</span><small>· daha ulaşılabilir</small>
+          </div>
+          <div class="uc-nets">
+            <div class="net-row">
+              <div class="net-head">
+                <span class="net-name"><i class="fas fa-pen-to-square c-tyt"></i> TYT NET</span>
+                <span class="net-num c-tyt">63,25<small>/120</small></span>
+              </div>
+              <div class="net-track"><div class="net-fill fill-tyt" data-w="52.7"></div></div>
+            </div>
+            <div class="net-row">
+              <div class="net-head">
+                <span class="net-name"><i class="fas fa-book-open c-dil"></i> DİL NET</span>
+                <span class="net-num c-dil">76,26<small>/80</small></span>
+              </div>
+              <div class="net-track"><div class="net-fill fill-dil" data-w="95.3"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 29 MAYIS -->
+        <div class="uni-card" data-rv data-d="580" data-rank="10609" data-tyt="56.25" data-dil="73.75">
+          <div class="uc-top">
+            <div class="uc-rank">4</div>
+            <div class="uc-name">
+              <h3>İstanbul 29 Mayıs Üniversitesi</h3>
+              <div class="uc-tags">
+                <span class="tag tag-burs"><i class="fas fa-award"></i> Burslu</span>
+                <span class="tag tag-vakif">Vakıf</span>
+              </div>
+            </div>
+          </div>
+          <div class="uc-ranks">
+            <div class="rk-box now"><div class="rk-lbl">Bu Yıl</div><div class="rk-val">10.609</div></div>
+            <div class="rk-box"><div class="rk-lbl">Geçen Yıl</div><div class="rk-val">9.427</div></div>
+          </div>
+          <div class="uc-diff">
+            <i class="fas fa-arrow-trend-down"></i>
+            <span>1.182 sıra gevşedi</span><small>· daha ulaşılabilir</small>
+          </div>
+          <div class="uc-nets">
+            <div class="net-row">
+              <div class="net-head">
+                <span class="net-name"><i class="fas fa-pen-to-square c-tyt"></i> TYT NET</span>
+                <span class="net-num c-tyt">56,25<small>/120</small></span>
+              </div>
+              <div class="net-track"><div class="net-fill fill-tyt" data-w="46.9"></div></div>
+            </div>
+            <div class="net-row">
+              <div class="net-head">
+                <span class="net-name"><i class="fas fa-book-open c-dil"></i> DİL NET</span>
+                <span class="net-num c-dil">73,75<small>/80</small></span>
+              </div>
+              <div class="net-track"><div class="net-fill fill-dil" data-w="92.2"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 HALİÇ -->
+        <div class="uni-card" data-rv data-d="660" data-rank="11472" data-tyt="56.25" data-dil="74.00">
+          <div class="uc-top">
+            <div class="uc-rank">5</div>
+            <div class="uc-name">
+              <h3>Haliç Üniversitesi</h3>
+              <div class="uc-tags">
+                <span class="tag tag-burs"><i class="fas fa-award"></i> Burslu</span>
+                <span class="tag tag-vakif">Vakıf</span>
+              </div>
+            </div>
+          </div>
+          <div class="uc-ranks">
+            <div class="rk-box now"><div class="rk-lbl">Bu Yıl</div><div class="rk-val">11.472</div></div>
+            <div class="rk-box"><div class="rk-lbl">Geçen Yıl</div><div class="rk-val">9.443</div></div>
+          </div>
+          <div class="uc-diff">
+            <i class="fas fa-arrow-trend-down"></i>
+            <span>2.029 sıra gevşedi</span><small>· daha ulaşılabilir</small>
+          </div>
+          <div class="uc-nets">
+            <div class="net-row">
+              <div class="net-head">
+                <span class="net-name"><i class="fas fa-pen-to-square c-tyt"></i> TYT NET</span>
+                <span class="net-num c-tyt">56,25<small>/120</small></span>
+              </div>
+              <div class="net-track"><div class="net-fill fill-tyt" data-w="46.9"></div></div>
+            </div>
+            <div class="net-row">
+              <div class="net-head">
+                <span class="net-name"><i class="fas fa-book-open c-dil"></i> DİL NET</span>
+                <span class="net-num c-dil">74,00<small>/80</small></span>
+              </div>
+              <div class="net-track"><div class="net-fill fill-dil" data-w="92.5"></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </section>
 
-    <!-- ═══════════ MAIN CONTENT ═══════════ -->
-    <div id="main-content">
+  <!-- 02 · TABLO -->
+  <section class="section" id="tablo">
+    <div class="inner">
+      <div class="s-head">
+        <p class="s-num" data-rv><i class="fas fa-bookmark"></i> Bölüm 02</p>
+        <h2 data-rv data-d="100">Karşılaştırma Tablosu</h2>
+        <p class="s-sub" data-rv data-d="200">Tüm veriler tek bakışta</p>
+      </div>
+      <div class="divider" data-rv data-d="270"></div>
 
-        <!-- HERO -->
-        <section class="hero">
-            <div class="hero-icon" data-reveal>
-                <i class="fas fa-paw"></i>
-            </div>
-            <div class="hero-badge" data-reveal data-delay="150">
-                <i class="fas fa-stethoscope"></i>
-                Veteriner Fakültesi
-            </div>
-            <h1 data-reveal data-delay="300">
-                <span class="gradient-text">Veteriner</span><br>
-                <span class="gradient-text-2">Fakültesi</span>
-            </h1>
-            <p data-reveal data-delay="500">
-                Hangi üniversite, kaç sıralama, kaç net gerekiyor?
-                Karşında en güncel veriler :)
-            </p>
-            <div class="hero-arrow" data-reveal data-delay="900">
-                <i class="fas fa-chevron-down"></i>
-            </div>
-        </section>
-
-        <!-- ═══════════ ÜNİVERSİTE KARTLARI ═══════════ -->
-        <section class="content-section section-bg-accent">
-            <div class="section-inner">
-                <div class="section-header">
-                    <p class="section-number" data-reveal><i class="fas fa-bookmark"></i> Bölüm 01</p>
-                    <h2 data-reveal data-delay="100">Üniversite Sıralamaları</h2>
-                    <p class="subtitle" data-reveal data-delay="200">2025 güncel verileri ve geçen yıl karşılaştırması</p>
-                </div>
-                <div class="divider" data-reveal data-delay="280"></div>
-
-                <div class="uni-cards-grid">
-
-                    <!-- 1. İÜC İngilizce -->
-                    <div class="uni-card" data-reveal data-delay="300">
-                        <div class="uni-card-header">
-                            <div>
-                                <div class="uni-card-name">İstanbul Üniversitesi - Cerrahpaşa</div>
-                                <span class="uni-card-lang lang-en"><i class="fas fa-globe"></i> İngilizce</span>
-                            </div>
-                            <div class="uni-rank-badge">1</div>
-                        </div>
-                        <div class="uni-stats-grid">
-                            <div class="uni-stat-box">
-                                <div class="uni-stat-label"><i class="fas fa-calendar-check"></i> 2025</div>
-                                <div class="uni-stat-value red">65.896</div>
-                            </div>
-                            <div class="uni-stat-box">
-                                <div class="uni-stat-label"><i class="fas fa-calendar-minus"></i> 2024</div>
-                                <div class="uni-stat-value">70.200</div>
-                            </div>
-                        </div>
-                        <div class="uni-diff-row">
-                            <i class="fas fa-arrow-trend-up"></i>
-                            <span class="uni-diff-text">4.304 sıra yükseldi</span>
-                        </div>
-                        <div class="uni-nets-row">
-                            <div class="net-box">
-                                <div class="net-box-label">TYT NET</div>
-                                <div class="net-box-value net-tyt">~83</div>
-                            </div>
-                            <div class="net-box">
-                                <div class="net-box-label">AYT NET</div>
-                                <div class="net-box-value net-ayt">~52</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. İÜC Türkçe -->
-                    <div class="uni-card" data-reveal data-delay="400">
-                        <div class="uni-card-header">
-                            <div>
-                                <div class="uni-card-name">İstanbul Üniversitesi - Cerrahpaşa</div>
-                                <span class="uni-card-lang lang-tr"><i class="fas fa-flag"></i> Türkçe</span>
-                            </div>
-                            <div class="uni-rank-badge">2</div>
-                        </div>
-                        <div class="uni-stats-grid">
-                            <div class="uni-stat-box">
-                                <div class="uni-stat-label"><i class="fas fa-calendar-check"></i> 2025</div>
-                                <div class="uni-stat-value red">70.808</div>
-                            </div>
-                            <div class="uni-stat-box">
-                                <div class="uni-stat-label"><i class="fas fa-calendar-minus"></i> 2024</div>
-                                <div class="uni-stat-value">75.400</div>
-                            </div>
-                        </div>
-                        <div class="uni-diff-row">
-                            <i class="fas fa-arrow-trend-up"></i>
-                            <span class="uni-diff-text">4.592 sıra yükseldi</span>
-                        </div>
-                        <div class="uni-nets-row">
-                            <div class="net-box">
-                                <div class="net-box-label">TYT NET</div>
-                                <div class="net-box-value net-tyt">~79</div>
-                            </div>
-                            <div class="net-box">
-                                <div class="net-box-label">AYT NET</div>
-                                <div class="net-box-value net-ayt">~48</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 3. Bursa Uludağ -->
-                    <div class="uni-card" data-reveal data-delay="500">
-                        <div class="uni-card-header">
-                            <div>
-                                <div class="uni-card-name">Bursa Uludağ Üniversitesi</div>
-                            </div>
-                            <div class="uni-rank-badge">3</div>
-                        </div>
-                        <div class="uni-stats-grid">
-                            <div class="uni-stat-box">
-                                <div class="uni-stat-label"><i class="fas fa-calendar-check"></i> 2025</div>
-                                <div class="uni-stat-value red">72.664</div>
-                            </div>
-                            <div class="uni-stat-box">
-                                <div class="uni-stat-label"><i class="fas fa-calendar-minus"></i> 2024</div>
-                                <div class="uni-stat-value">78.100</div>
-                            </div>
-                        </div>
-                        <div class="uni-diff-row">
-                            <i class="fas fa-arrow-trend-up"></i>
-                            <span class="uni-diff-text">5.436 sıra yükseldi</span>
-                        </div>
-                        <div class="uni-nets-row">
-                            <div class="net-box">
-                                <div class="net-box-label">TYT NET</div>
-                                <div class="net-box-value net-tyt">~78</div>
-                            </div>
-                            <div class="net-box">
-                                <div class="net-box-label">AYT NET</div>
-                                <div class="net-box-value net-ayt">~47</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 4. Balıkesir -->
-                    <div class="uni-card" data-reveal data-delay="600">
-                        <div class="uni-card-header">
-                            <div>
-                                <div class="uni-card-name">Balıkesir Üniversitesi</div>
-                            </div>
-                            <div class="uni-rank-badge">4</div>
-                        </div>
-                        <div class="uni-stats-grid">
-                            <div class="uni-stat-box">
-                                <div class="uni-stat-label"><i class="fas fa-calendar-check"></i> 2025</div>
-                                <div class="uni-stat-value red">88.200</div>
-                            </div>
-                            <div class="uni-stat-box">
-                                <div class="uni-stat-label"><i class="fas fa-calendar-minus"></i> 2024</div>
-                                <div class="uni-stat-value">94.500</div>
-                            </div>
-                        </div>
-                        <div class="uni-diff-row">
-                            <i class="fas fa-arrow-trend-up"></i>
-                            <span class="uni-diff-text">6.300 sıra yükseldi</span>
-                        </div>
-                        <div class="uni-nets-row">
-                            <div class="net-box">
-                                <div class="net-box-label">TYT NET</div>
-                                <div class="net-box-value net-tyt">~74</div>
-                            </div>
-                            <div class="net-box">
-                                <div class="net-box-label">AYT NET</div>
-                                <div class="net-box-value net-ayt">~43</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 5. Tekirdağ Namık Kemal -->
-                    <div class="uni-card" data-reveal data-delay="700">
-                        <div class="uni-card-header">
-                            <div>
-                                <div class="uni-card-name">Tekirdağ Namık Kemal Üniversitesi</div>
-                            </div>
-                            <div class="uni-rank-badge">5</div>
-                        </div>
-                        <div class="uni-stats-grid">
-                            <div class="uni-stat-box">
-                                <div class="uni-stat-label"><i class="fas fa-calendar-check"></i> 2025</div>
-                                <div class="uni-stat-value red">98.500</div>
-                            </div>
-                            <div class="uni-stat-box">
-                                <div class="uni-stat-label"><i class="fas fa-calendar-minus"></i> 2024</div>
-                                <div class="uni-stat-value">106.000</div>
-                            </div>
-                        </div>
-                        <div class="uni-diff-row">
-                            <i class="fas fa-arrow-trend-up"></i>
-                            <span class="uni-diff-text">7.500 sıra yükseldi</span>
-                        </div>
-                        <div class="uni-nets-row">
-                            <div class="net-box">
-                                <div class="net-box-label">TYT NET</div>
-                                <div class="net-box-value net-tyt">~72</div>
-                            </div>
-                            <div class="net-box">
-                                <div class="net-box-label">AYT NET</div>
-                                <div class="net-box-value net-ayt">~41</div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- ═══════════ KARŞILAŞTIRMA TABLOSU ═══════════ -->
-        <section class="content-section">
-            <div class="section-inner">
-                <div class="section-header">
-                    <p class="section-number green" data-reveal><i class="fas fa-bookmark"></i> Bölüm 02</p>
-                    <h2 data-reveal data-delay="100">Karşılaştırma Tablosu</h2>
-                    <p class="subtitle" data-reveal data-delay="200">Tüm verileri bir arada gör</p>
-                </div>
-                <div class="divider" data-reveal data-delay="280"></div>
-
-                <div class="scroll-hint">
-                    <i class="fas fa-arrows-left-right"></i> Tabloyu yana kaydırabilirsin
-                </div>
-
-                <div class="comparison-section">
-                    <table class="comparison-table" data-reveal data-delay="350">
-                        <thead>
-                            <tr>
-                                <th>Üniversite / Program</th>
-                                <th>2025 Sıralama</th>
-                                <th>2024 Sıralama</th>
-                                <th>Fark</th>
-                                <th>TYT Net</th>
-                                <th>AYT Net</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>İÜ-Cerrahpaşa (İngilizce)</td>
-                                <td>65.896</td>
-                                <td>70.200</td>
-                                <td><span class="table-badge-up"><i class="fas fa-arrow-up"></i> 4.304</span></td>
-                                <td>~83</td>
-                                <td>~52</td>
-                            </tr>
-                            <tr>
-                                <td>İÜ-Cerrahpaşa (Türkçe)</td>
-                                <td>70.808</td>
-                                <td>75.400</td>
-                                <td><span class="table-badge-up"><i class="fas fa-arrow-up"></i> 4.592</span></td>
-                                <td>~79</td>
-                                <td>~48</td>
-                            </tr>
-                            <tr>
-                                <td>Bursa Uludağ Üni.</td>
-                                <td>72.664</td>
-                                <td>78.100</td>
-                                <td><span class="table-badge-up"><i class="fas fa-arrow-up"></i> 5.436</span></td>
-                                <td>~78</td>
-                                <td>~47</td>
-                            </tr>
-                            <tr>
-                                <td>Balıkesir Üni.</td>
-                                <td>88.200</td>
-                                <td>94.500</td>
-                                <td><span class="table-badge-up"><i class="fas fa-arrow-up"></i> 6.300</span></td>
-                                <td>~74</td>
-                                <td>~43</td>
-                            </tr>
-                            <tr>
-                                <td>Tekirdağ Namık Kemal</td>
-                                <td>98.500</td>
-                                <td>106.000</td>
-                                <td><span class="table-badge-up"><i class="fas fa-arrow-up"></i> 7.500</span></td>
-                                <td>~72</td>
-                                <td>~41</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-       
-
-        <!-- ═══════════ RAKAMLAR ═══════════ -->
-        <section class="content-section">
-            <div class="section-inner">
-                <div class="section-header">
-                    <p class="section-number green" data-reveal><i class="fas fa-bookmark"></i> Bölüm 03</p>
-                    <h2 data-reveal data-delay="100">Rakamlarla Özet</h2>
-                </div>
-                <div class="divider" data-reveal data-delay="200"></div>
-                <div class="stats-grid">
-                    <div class="stat-card" data-reveal data-delay="300">
-                        <div class="stat-icon" style="color: var(--red-soft);"><i class="fas fa-university"></i></div>
-                        <div class="stat-number" data-count="5">0</div>
-                        <div class="stat-label">Üniversite Seçeneği</div>
-                    </div>
-                    <div class="stat-card" data-reveal data-delay="400">
-                        <div class="stat-icon" style="color: var(--green-soft);"><i class="fas fa-ranking-star"></i></div>
-                        <div class="stat-number green-grad" data-count="65896" data-format="dot">0</div>
-                        <div class="stat-label">En İyi Sıralama</div>
-                    </div>
-                    <div class="stat-card" data-reveal data-delay="500">
-                        <div class="stat-icon" style="color: #fb923c;"><i class="fas fa-pen-to-square"></i></div>
-                        <div class="stat-number" data-count="83" style="background: linear-gradient(135deg, #fb923c, #fdba74); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0</div>
-                        <div class="stat-label">Maks. TYT Net Hedefi</div>
-                    </div>
-                    <div class="stat-card" data-reveal data-delay="600">
-                        <div class="stat-icon" style="color: #a78bfa;"><i class="fas fa-calculator"></i></div>
-                        <div class="stat-number" data-count="52" style="background: linear-gradient(135deg, #a78bfa, #c4b5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0</div>
-                        <div class="stat-label">Maks. AYT Net Hedefi</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-       
-        <!-- FOOTER -->
-        <footer class="footer">
-            <p>Senin için <i class="fas fa-heart heart"></i> ile hazırlandı</p>
-        </footer>
-
+      <div class="table-wrap" data-rv data-d="330">
+        <table class="ctable">
+          <thead>
+            <tr>
+              <th>Üniversite</th><th>Bu Yıl</th><th>Geçen Yıl</th><th>Fark</th><th>TYT</th><th>Dil</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Üniversite">Bahçeşehir Üni. <span class="tag tag-burs" style="margin-left:4px">Burslu</span></td>
+              <td data-label="Bu Yıl"><span class="t-blue">4.709</span></td>
+              <td data-label="Geçen Yıl">3.658</td>
+              <td data-label="Fark"><span class="t-pill"><i class="fas fa-arrow-down"></i> 1.051</span></td>
+              <td data-label="TYT Net"><span class="t-blue">77,75</span></td>
+              <td data-label="Dil Net"><span class="t-gray">72,50</span></td>
+            </tr>
+            <tr>
+              <td data-label="Üniversite">İstanbul Üniversitesi</td>
+              <td data-label="Bu Yıl"><span class="t-blue">5.558</span></td>
+              <td data-label="Geçen Yıl">4.210</td>
+              <td data-label="Fark"><span class="t-pill"><i class="fas fa-arrow-down"></i> 1.348</span></td>
+              <td data-label="TYT Net"><span class="t-blue">65,75</span></td>
+              <td data-label="Dil Net"><span class="t-gray">76,25</span></td>
+            </tr>
+            <tr>
+              <td data-label="Üniversite">Marmara Üniversitesi</td>
+              <td data-label="Bu Yıl"><span class="t-blue">6.302</span></td>
+              <td data-label="Geçen Yıl">4.858</td>
+              <td data-label="Fark"><span class="t-pill"><i class="fas fa-arrow-down"></i> 1.444</span></td>
+              <td data-label="TYT Net"><span class="t-blue">63,25</span></td>
+              <td data-label="Dil Net"><span class="t-gray">76,26</span></td>
+            </tr>
+            <tr>
+              <td data-label="Üniversite">İstanbul 29 Mayıs <span class="tag tag-burs" style="margin-left:4px">Burslu</span></td>
+              <td data-label="Bu Yıl"><span class="t-blue">10.609</span></td>
+              <td data-label="Geçen Yıl">9.427</td>
+              <td data-label="Fark"><span class="t-pill"><i class="fas fa-arrow-down"></i> 1.182</span></td>
+              <td data-label="TYT Net"><span class="t-blue">56,25</span></td>
+              <td data-label="Dil Net"><span class="t-gray">73,75</span></td>
+            </tr>
+            <tr>
+              <td data-label="Üniversite">Haliç Üniversitesi <span class="tag tag-burs" style="margin-left:4px">Burslu</span></td>
+              <td data-label="Bu Yıl"><span class="t-blue">11.472</span></td>
+              <td data-label="Geçen Yıl">9.443</td>
+              <td data-label="Fark"><span class="t-pill"><i class="fas fa-arrow-down"></i> 2.029</span></td>
+              <td data-label="TYT Net"><span class="t-blue">56,25</span></td>
+              <td data-label="Dil Net"><span class="t-gray">74,00</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+  </section>
 
-    <script>
-        // ═══════════ TYPEWRITER ═══════════
-        const typeText = "Veteriner Fakültesi sıralamaları ve netleri nedir?";
-        const typeEl = document.getElementById('typewriter');
-        let ci = 0;
+  <!-- 03 · ANALİZ -->
+  <section class="section" id="analiz">
+    <div class="inner">
+      <div class="s-head">
+        <p class="s-num" data-rv><i class="fas fa-bookmark"></i> Bölüm 03</p>
+        <h2 data-rv data-d="100">Verilerin Söyledikleri</h2>
+        <p class="s-sub" data-rv data-d="200">Tercih yaparken aklında bulunsun</p>
+      </div>
+      <div class="divider" data-rv data-d="270"></div>
 
-        function typeWriter() {
-            if (ci < typeText.length) {
-                typeEl.textContent = typeText.substring(0, ci + 1);
-                ci++;
-                setTimeout(typeWriter, 50);
-            }
+      <div class="info-grid">
+        <div class="info-card" data-rv data-d="330">
+          <div class="ic-icon" style="background:rgba(59,130,246,.1);color:var(--blue-l)"><i class="fas fa-arrow-trend-down"></i></div>
+          <h3>Sıralamalar Gevşedi</h3>
+          <p>Beş programın tamamında bu yılki sıralama geçen yıla göre geriledi. Yani geçen seneye kıyasla aynı bölüme biraz daha rahat girilebiliyor.</p>
+        </div>
+        <div class="info-card" data-rv data-d="410">
+          <div class="ic-icon" style="background:rgba(148,163,184,.1);color:var(--gray-l)"><i class="fas fa-book-open"></i></div>
+          <h3>Belirleyici Olan Dil Testi</h3>
+          <p>Listedeki tüm programlarda Dil neti 72'nin üzerinde. 80 soruluk YDT'de her net ciddi puan demek — asıl fark burada açılıyor.</p>
+        </div>
+        <div class="info-card" data-rv data-d="490">
+          <div class="ic-icon" style="background:rgba(56,189,248,.1);color:var(--sky)"><i class="fas fa-scale-balanced"></i></div>
+          <h3>TYT'yi Hafife Alma</h3>
+          <p>Bahçeşehir'de 77,75 TYT neti gerekirken Haliç'te 56,25 yetiyor. Dil netleri yakın olduğunda sıralamayı TYT belirliyor.</p>
+        </div>
+        <div class="info-card" data-rv data-d="570">
+          <div class="ic-icon" style="background:rgba(59,130,246,.1);color:var(--blue-xl)"><i class="fas fa-award"></i></div>
+          <h3>Burslu Programların Gücü</h3>
+          <p>Listenin zirvesindeki Bahçeşehir burslu kontenjanı, devlet üniversitelerinden bile önde. Tam burslu vakıf programları ciddi alternatif.</p>
+        </div>
+        <div class="info-card" data-rv data-d="650">
+          <div class="ic-icon" style="background:rgba(148,163,184,.1);color:var(--gray)"><i class="fas fa-landmark"></i></div>
+          <h3>Devlet Seçenekleri</h3>
+          <p>İstanbul ve Marmara arasında yalnızca 744 sıra var. Dil netleri neredeyse aynı; aradaki farkı 2,5 netlik TYT farkı yaratıyor.</p>
+        </div>
+        <div class="info-card" data-rv data-d="730">
+          <div class="ic-icon" style="background:rgba(56,189,248,.1);color:#7dd3fc"><i class="fas fa-bullseye"></i></div>
+          <h3>Hedefini Belirle</h3>
+          <p>İlk üçe girmek için TYT'de 63+, Dil'de 76+ net hedeflemelisin. Son iki program içinse TYT 56, Dil 74 bandı yeterli görünüyor.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · KARİYER -->
+  <section class="section" id="kariyer">
+    <div class="inner">
+      <div class="s-head">
+        <p class="s-num" data-rv><i class="fas fa-bookmark"></i> Bölüm 04</p>
+        <h2 data-rv data-d="100">Mezun Olunca Ne İş Yaparsın?</h2>
+        <p class="s-sub" data-rv data-d="200">Dil bilen her kapıyı açar</p>
+      </div>
+      <div class="divider" data-rv data-d="270"></div>
+
+      <div class="job-grid">
+        <div class="job-item" data-rv data-d="300"><div class="job-ic"><i class="fas fa-file-signature"></i></div><div class="job-tx"><h4>Mütercim (Yazılı Çevirmen)</h4><p>Kitap, belge, teknik metin çevirisi</p></div></div>
+        <div class="job-item" data-rv data-d="350"><div class="job-ic"><i class="fas fa-headset"></i></div><div class="job-tx"><h4>Simultane Tercüman</h4><p>Konferans ve zirvelerde anlık çeviri</p></div></div>
+        <div class="job-item" data-rv data-d="400"><div class="job-ic"><i class="fas fa-building-columns"></i></div><div class="job-tx"><h4>Dışişleri & Diplomasi</h4><p>Bakanlık ve elçiliklerde görev</p></div></div>
+        <div class="job-item" data-rv data-d="450"><div class="job-ic"><i class="fas fa-closed-captioning"></i></div><div class="job-tx"><h4>Altyazı & Dublaj Çevirmeni</h4><p>Netflix, dizi, film ve oyun sektörü</p></div></div>
+        <div class="job-item" data-rv data-d="500"><div class="job-ic"><i class="fas fa-gavel"></i></div><div class="job-tx"><h4>Yeminli Tercüman</h4><p>Noter onaylı resmi belge çevirisi</p></div></div>
+        <div class="job-item" data-rv data-d="550"><div class="job-ic"><i class="fas fa-globe"></i></div><div class="job-tx"><h4>Lokalizasyon Uzmanı</h4><p>Yazılım ve web sitesi yerelleştirme</p></div></div>
+        <div class="job-item" data-rv data-d="600"><div class="job-ic"><i class="fas fa-chalkboard-user"></i></div><div class="job-tx"><h4>Akademisyen</h4><p>Çeviribilim alanında üniversitede kal</p></div></div>
+        <div class="job-item" data-rv data-d="650"><div class="job-ic"><i class="fas fa-briefcase"></i></div><div class="job-tx"><h4>Dış Ticaret & Kurumsal</h4><p>Çok uluslu şirketlerde uzmanlık</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · RAKAMLAR -->
+  <section class="section" id="ozet">
+    <div class="inner">
+      <div class="s-head">
+        <p class="s-num" data-rv><i class="fas fa-bookmark"></i> Bölüm 05</p>
+        <h2 data-rv data-d="100">Rakamlarla Özet</h2>
+      </div>
+      <div class="divider" data-rv data-d="200"></div>
+
+      <div class="stats-grid">
+        <div class="stat-card" data-rv data-d="280">
+          <div class="st-ic"><i class="fas fa-university"></i></div>
+          <div class="st-num" data-count="5">0</div>
+          <div class="st-lbl">Üniversite Seçeneği</div>
+        </div>
+        <div class="stat-card" data-rv data-d="360">
+          <div class="st-ic"><i class="fas fa-ranking-star"></i></div>
+          <div class="st-num" data-count="4709" data-format="dot">0</div>
+          <div class="st-lbl">En İyi Sıralama</div>
+        </div>
+        <div class="stat-card" data-rv data-d="440">
+          <div class="st-ic" style="color:var(--blue-xl)"><i class="fas fa-pen-to-square"></i></div>
+          <div class="st-num" data-count="78">0</div>
+          <div class="st-lbl">En Yüksek TYT Hedefi</div>
+        </div>
+        <div class="stat-card" data-rv data-d="520">
+          <div class="st-ic" style="color:var(--gray-l)"><i class="fas fa-book-open"></i></div>
+          <div class="st-num gray" data-count="76">0</div>
+          <div class="st-lbl">En Yüksek Dil Hedefi</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <section class="section quote-sec">
+    <div class="quote-wrap">
+      <div class="q-ic" data-rv><i class="fas fa-quote-left"></i></div>
+      <blockquote data-rv data-d="180">Yeni bir dil, yeni bir insan demektir.</blockquote>
+      <p class="q-author" data-rv data-d="380"><i class="fas fa-earth-europe"></i>&nbsp; Tercih dönemin hayırlı olsun!</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Senin için <i class="fas fa-heart heart"></i> ile hazırlandı</p>
+  </footer>
+
+</div>
+
+<!-- ══════ NAV ══════ -->
+<nav class="nav" id="nav">
+  <div class="nav-brand"><div class="dot"><i class="fas fa-language"></i></div><span>Mütercim &amp; Tercümanlık</span></div>
+  <div class="nav-links">
+    <a href="#siralama">Sıralamalar</a>
+    <a href="#tablo">Tablo</a>
+    <a href="#analiz">Analiz</a>
+    <a href="#kariyer">Kariyer</a>
+    <a href="#ozet">Özet</a>
+  </div>
+</nav>
+
+<script>
+/* ══════ TYPEWRITER ══════ */
+const typeText="İngilizce Mütercim ve Tercümanlık sıralamaları nedir?";
+const typeEl=document.getElementById('typewriter');
+let ci=0;
+function typeWriter(){
+  if(ci<typeText.length){typeEl.textContent=typeText.substring(0,ci+1);ci++;setTimeout(typeWriter,48);}
+}
+setTimeout(typeWriter,550);
+
+/* ══════ START ══════ */
+function startExperience(){
+  const ss=document.getElementById('search-screen');
+  const mc=document.getElementById('main-content');
+  const btn=document.getElementById('searchBtn');
+  btn.style.transform='scale(1.6)';btn.style.opacity='.35';
+  setTimeout(()=>{
+    ss.classList.add('hide');
+    mc.classList.add('show');
+    setTimeout(()=>{ss.style.display='none';initObserver();navCheck();},950);
+  },380);
+}
+
+/* ══════ OBSERVER ══════ */
+function initObserver(){
+  const els=document.querySelectorAll('[data-rv]');
+  const obs=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(!e.isIntersecting)return;
+      const d=parseInt(e.target.getAttribute('data-d')||0);
+      setTimeout(()=>{
+        const el=e.target;
+        if(el.classList.contains('stat-card')){
+          el.classList.add('rv-s');
+          const n=el.querySelector('.st-num');
+          if(n)animateCount(n,parseInt(n.dataset.count),n.dataset.format);
+        }else if(el.classList.contains('divider')){
+          el.classList.add('rv-d');
+        }else{
+          el.classList.add('rv');
+          el.querySelectorAll('.net-fill').forEach((f,i)=>{
+            setTimeout(()=>{f.style.width=f.dataset.w+'%';},180+i*130);
+          });
         }
-        setTimeout(typeWriter, 600);
+      },d);
+      obs.unobserve(e.target);
+    });
+  },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+  els.forEach(el=>obs.observe(el));
+}
 
-        // ═══════════ PARTICLES ═══════════
-        (function createParticles() {
-            const c = document.getElementById('particles');
-            const colors = [
-                'rgba(220, 38, 38, 0.2)',
-                'rgba(34, 197, 94, 0.2)',
-                'rgba(30, 58, 95, 0.3)',
-                'rgba(239, 68, 68, 0.15)',
-                'rgba(22, 101, 52, 0.2)'
-            ];
-            for (let i = 0; i < 25; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                const size = Math.random() * 2.5 + 1;
-                Object.assign(p.style, {
-                    left: Math.random() * 100 + '%',
-                    width: size + 'px',
-                    height: size + 'px',
-                    background: colors[Math.floor(Math.random() * colors.length)],
-                    animationDuration: (Math.random() * 12 + 10) + 's',
-                    animationDelay: (Math.random() * 12) + 's'
-                });
-                c.appendChild(p);
-            }
-        })();
+/* ══════ COUNTER ══════ */
+function animateCount(el,target,format){
+  let cur=0;const dur=1500;const step=target/(dur/16);
+  (function up(){
+    cur+=step;
+    if(cur<target){
+      const v=Math.floor(cur);
+      el.textContent=format==='dot'?v.toLocaleString('tr-TR'):v;
+      requestAnimationFrame(up);
+    }else{
+      el.textContent=format==='dot'?target.toLocaleString('tr-TR'):target;
+    }
+  })();
+}
 
-        // ═══════════ START EXPERIENCE ═══════════
-        function startExperience() {
-            const ss = document.getElementById('search-screen');
-            const mc = document.getElementById('main-content');
-            const btn = document.getElementById('searchBtn');
+/* ══════ SORT ══════ */
+const sortBtns=document.querySelectorAll('.sort-btn');
+const grid=document.getElementById('uniGrid');
+sortBtns.forEach(b=>{
+  b.addEventListener('click',()=>{
+    sortBtns.forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const key=b.dataset.sort;
+    const cards=[...grid.children];
+    cards.sort((a,x)=>{
+      if(key==='rank')return (+a.dataset.rank)-(+x.dataset.rank);
+      return (+x.dataset[key])-(+a.dataset[key]);
+    });
+    cards.forEach((c,i)=>{
+      c.style.order=i;
+      c.style.transition='none';
+      c.style.opacity='.35';
+      c.style.transform='translateY(10px)';
+      setTimeout(()=>{
+        c.style.transition='all .45s cubic-bezier(.16,1,.3,1)';
+        c.style.opacity='1';c.style.transform='none';
+      },30+i*55);
+    });
+  });
+});
 
-            btn.style.transform = 'scale(1.6)';
-            btn.style.opacity = '0.4';
+/* ══════ PROGRESS + NAV ══════ */
+const nav=document.getElementById('nav');
+function navCheck(){
+  if(window.scrollY>window.innerHeight*.72)nav.classList.add('visible');
+  else nav.classList.remove('visible');
+}
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
+  document.getElementById('progressBar').style.width=Math.min(pct,100)+'%';
+  navCheck();
+},{passive:true});
 
-            setTimeout(() => {
-                ss.classList.add('hide');
-                mc.classList.add('show');
-
-                setTimeout(() => {
-                    ss.style.display = 'none';
-                    initObserver();
-                }, 1000);
-            }, 400);
-        }
-
-        // ═══════════ INTERSECTION OBSERVER ═══════════
-        function initObserver() {
-            const els = document.querySelectorAll('[data-reveal]');
-            const obs = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const d = parseInt(entry.target.getAttribute('data-delay') || 0);
-                        setTimeout(() => {
-                            const el = entry.target;
-
-                            if (el.classList.contains('stat-card')) {
-                                el.classList.add('revealed-scale');
-                                const num = el.querySelector('.stat-number');
-                                if (num) {
-                                    const target = parseInt(num.dataset.count);
-                                    const format = num.dataset.format;
-                                    animateCount(num, target, format);
-                                }
-                            } else if (el.classList.contains('divider')) {
-                                el.classList.add('revealed-divider');
-                            } else {
-                                el.classList.add('revealed');
-                            }
-                        }, d);
-                        obs.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
-
-            els.forEach(el => obs.observe(el));
-        }
-
-        // ═══════════ COUNTER ANIMATION ═══════════
-        function animateCount(el, target, format) {
-            let cur = 0;
-            const dur = 1600;
-            const step = target / (dur / 16);
-            (function update() {
-                cur += step;
-                if (cur < target) {
-                    const val = Math.floor(cur);
-                    el.textContent = format === 'dot' ? val.toLocaleString('tr-TR') : val;
-                    requestAnimationFrame(update);
-                } else {
-                    el.textContent = format === 'dot' ? target.toLocaleString('tr-TR') : target;
-                }
-            })();
-        }
-
-        // ═══════════ PROGRESS BAR ═══════════
-        window.addEventListener('scroll', () => {
-            const h = document.documentElement;
-            const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-            document.getElementById('progressBar').style.width = Math.min(pct, 100) + '%';
-        });
-
-        // ═══════════ KEYBOARD SUPPORT ═══════════
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const ss = document.getElementById('search-screen');
-                if (!ss.classList.contains('hide')) startExperience();
-            }
-        });
-    </script>
+/* ══════ ENTER ══════ */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const ss=document.getElementById('search-screen');
+    if(!ss.classList.contains('hide'))startExperience();
+  }
+});
+</script>
 </body>
 </html>
